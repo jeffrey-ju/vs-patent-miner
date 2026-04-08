@@ -1,0 +1,149 @@
+{
+  "metadata": {
+    "title_zh": "多維度 OKR 對齊評分系統",
+    "title_en": "Multi-Dimensional OKR Alignment Scoring System",
+    "patent_id": "VS-OKR-2026-001",
+    "innovation_id": "INV-001",
+    "date": "2026-04-08",
+    "disclosure_source": "output/disclosures/INV-001-disclosure.json",
+    "generated_date": "2026-04-08"
+  },
+  "slides": [
+    {
+      "slide_number": 1,
+      "type": "title",
+      "content": {
+        "title_zh": "多維度 OKR 對齊評分系統",
+        "title_en": "Multi-Dimensional OKR Alignment Scoring System",
+        "subtitle": "Patent Disclosure VS-OKR-2026-001",
+        "application_number": "VS-OKR-2026-001",
+        "inventors": ["Transformation AI Team"],
+        "date": "April 2026"
+      },
+      "speaker_notes": "Welcome everyone. Today I'll be presenting our patent disclosure for the Multi-Dimensional OKR Alignment Scoring System, a novel approach to evaluating goal alignment in enterprise environments."
+    },
+    {
+      "slide_number": 2,
+      "type": "problem",
+      "title": "Problem Statement",
+      "content": {
+        "bullets": [
+          "Existing OKR systems use simplistic alignment checks: keyword matching or single-dimensional similarity",
+          "Real organisational alignment requires matching against multiple targets: strategy documents, supervisor objectives, and methodology best practices",
+          "Current RAG systems retrieve documents without organisational awareness — treating team, department, and company documents equally",
+          "Alignment scores are opaque with no actionable feedback for improvement"
+        ]
+      },
+      "speaker_notes": "The core problem is that existing solutions are too simplistic. They miss the multi-faceted nature of real organisational alignment. An employee's objective needs to align with their team's strategy more than company-wide initiatives, but current systems can't express this."
+    },
+    {
+      "slide_number": 3,
+      "type": "solution",
+      "title": "Technical Solution",
+      "content": {
+        "description": "A three-dimensional alignment scoring system with scope-aware document retrieval and dynamic hierarchy traversal.",
+        "bullets": [
+          "Strategic Alignment (40%): Scope-weighted document similarity (team 1.2x, dept 1.0x, company 0.8x)",
+          "Vertical Alignment (40%): Parent objective or supervisor OKR matching with up to 3-level hierarchy traversal",
+          "Quality Alignment (20%): Methodology compliance with bilingual measurability detection",
+          "Proportional normalisation when dimensions unavailable",
+          "Transparent score breakdown with actionable suggestions"
+        ]
+      },
+      "speaker_notes": "Our solution introduces three independent scoring dimensions that are combined into a composite score. The key innovations are scope-aware weighting and dynamic hierarchy traversal. If a user's direct manager has no OKRs, we automatically look up the management chain."
+    },
+    {
+      "slide_number": 4,
+      "type": "architecture",
+      "title": "System Architecture",
+      "content": {
+        "diagram_description": "Three parallel scoring engines feed into a composite calculator, with a scope-aware retrieval module providing context"
+      },
+      "diagram": {
+        "type": "architecture",
+        "description": "Multi-dimensional alignment scoring system architecture",
+        "mermaid_code": "graph TB\n    subgraph Input\n        A[OKR Text + Key Results]\n        B[User Context]\n    end\n    \n    subgraph \"Scoring Engines\"\n        C[Strategic Engine]\n        D[Vertical Engine]\n        E[Quality Engine]\n    end\n    \n    subgraph \"Context Sources\"\n        F[(Strategy Docs)]\n        G[(Parent OKRs)]\n        H[(OKR Methodology)]\n    end\n    \n    subgraph \"Scope-Aware Retrieval\"\n        I{Scope Weighting}\n    end\n    \n    A --> C\n    A --> D\n    A --> E\n    B --> I\n    I --> F\n    F --> C\n    G --> D\n    H --> E\n    \n    C -->|0.40| J[Composite Calculator]\n    D -->|0.40| J\n    E -->|0.20| J\n    J --> K[Alignment Score 0-100]\n    J --> L[Breakdown + Suggestions]"
+      },
+      "speaker_notes": "This diagram shows how the three scoring engines work in parallel. Note the scope-aware retrieval module that weights documents based on organisational proximity. The composite calculator applies configurable weights and handles cases where some dimensions are unavailable."
+    },
+    {
+      "slide_number": 5,
+      "type": "features",
+      "title": "Key Features",
+      "content": {
+        "bullets": [
+          "Three-dimensional scoring: Strategic (40%) + Vertical (40%) + Quality (20%)",
+          "Scope-aware document weighting: Team 1.2x > Dept 1.0x > Company 0.8x",
+          "Dynamic hierarchy traversal: Up to 3 levels with circular reference detection",
+          "Bilingual support: CJK detection for Chinese OKRs (>30% threshold)",
+          "Proportional normalisation: Weights adjust when dimensions unavailable",
+          "Embedding cache: LRU cache (256 entries) with >60% hit rate",
+          "Actionable output: Per-dimension breakdown + improvement suggestions"
+        ]
+      },
+      "speaker_notes": "Let me highlight the key technical features. The scope-aware weighting is particularly novel — no existing RAG system considers organisational proximity. The bilingual support uses CJK character frequency detection to switch between English and Chinese patterns."
+    },
+    {
+      "slide_number": 6,
+      "type": "claims",
+      "title": "Patent Claims Summary",
+      "content": {
+        "claims_summary": [
+          "Claim 1 (Independent): Computer-implemented method for multi-dimensional goal alignment with scope-aware weighting, dynamic hierarchy traversal, and proportional normalisation",
+          "Claim 2: Specific scope weights (team 1.2, dept 1.0, company 0.8) with score capping",
+          "Claim 3: Circular reference detection in management chain traversal",
+          "Claim 4: Bilingual measurability detection with 30% CJK threshold",
+          "Claim 5: LRU embedding cache for performance optimisation",
+          "Claim 6: Structured output with breakdown, warnings, and suggestions"
+        ]
+      },
+      "speaker_notes": "The independent claim covers our core innovation: the combination of three-dimensional scoring with scope-aware weighting and dynamic traversal. The dependent claims protect specific implementation details that differentiate us from any prior art."
+    },
+    {
+      "slide_number": 7,
+      "type": "closing",
+      "title": "Summary & Next Steps",
+      "content": {
+        "closing_message": "This invention provides a novel approach to OKR alignment scoring that is more accurate, transparent, and actionable than existing solutions.",
+        "next_steps": [
+          "Review claims with patent counsel",
+          "Complete prior art search documentation",
+          "Prepare provisional patent application",
+          "Schedule formal patent review meeting"
+        ],
+        "contact": "Transformation AI Team — tai@viewsonic.com"
+      },
+      "speaker_notes": "In summary, our multi-dimensional approach with scope-aware weighting represents a significant advancement over existing single-dimensional solutions. The next step is formal review with patent counsel to refine the claims before filing."
+    }
+  ],
+  "diagrams": [
+    {
+      "slide_number": 4,
+      "type": "architecture",
+      "description": "Multi-dimensional alignment scoring system architecture showing three parallel scoring engines, scope-aware retrieval, and composite calculation",
+      "mermaid_code": "graph TB\n    subgraph Input\n        A[OKR Text + Key Results]\n        B[User Context]\n    end\n    \n    subgraph \"Scoring Engines\"\n        C[Strategic Engine]\n        D[Vertical Engine]\n        E[Quality Engine]\n    end\n    \n    subgraph \"Context Sources\"\n        F[(Strategy Docs)]\n        G[(Parent OKRs)]\n        H[(OKR Methodology)]\n    end\n    \n    subgraph \"Scope-Aware Retrieval\"\n        I{Scope Weighting}\n    end\n    \n    A --> C\n    A --> D\n    A --> E\n    B --> I\n    I --> F\n    F --> C\n    G --> D\n    H --> E\n    \n    C -->|0.40| J[Composite Calculator]\n    D -->|0.40| J\n    E -->|0.20| J\n    J --> K[Alignment Score 0-100]\n    J --> L[Breakdown + Suggestions]"
+    }
+  ],
+  "notes": {
+    "presentation_tips": [
+      "Emphasize the novelty of scope-aware weighting — this is the key differentiator",
+      "Be prepared to explain why three dimensions vs. one is non-obvious",
+      "Have specific examples ready for the bilingual support feature",
+      "Know the cache hit rate statistic (>60%) for performance questions"
+    ],
+    "anticipated_questions": [
+      {
+        "question": "How is this different from standard RAG?",
+        "suggested_answer": "Standard RAG treats all documents equally. Our system weights documents based on organisational proximity — team documents are more relevant than company-wide documents for most employees."
+      },
+      {
+        "question": "Why three dimensions specifically?",
+        "suggested_answer": "Each dimension captures a different aspect of alignment: strategic direction, management hierarchy, and methodology compliance. Existing systems only use one dimension, typically parent-child matching."
+      },
+      {
+        "question": "Is the 30% CJK threshold arbitrary?",
+        "suggested_answer": "The threshold was empirically determined through testing with bilingual content. Below 30%, text is typically English with occasional Chinese names. Above 30%, the content is meaningfully Chinese and requires Chinese-specific patterns."
+      }
+    ]
+  }
+}

@@ -1,0 +1,269 @@
+{
+  "metadata": {
+    "title": "Multi-Dimensional OKR Alignment Scoring System",
+    "title_zh": "多維度 OKR 對齊評分系統",
+    "field_of_invention": [
+      "Artificial Intelligence",
+      "Enterprise Goal Management",
+      "Hierarchical Scoring Systems"
+    ],
+    "application_number": "VS-OKR-2026-001",
+    "priority_date": "To be established upon provisional filing",
+    "inventors": ["Transformation AI Team"],
+    "assignee": "ViewSonic Corporation",
+    "generated_date": "2026-04-08",
+    "innovation_id": "INV-001"
+  },
+  "problem_statement": {
+    "background": [
+      "Enterprise goal management systems require employees to create Objectives and Key Results (OKRs) that align with organisational strategy. Existing systems evaluate alignment using simplistic approaches: keyword matching between child and parent goals, or single-dimensional similarity scoring. These approaches fail to capture the multi-faceted nature of organisational alignment.",
+      "In real organisations, an objective must simultaneously align with (a) strategic direction documents at varying organisational levels, (b) direct supervisor or parent objectives in the management hierarchy, and (c) established goal-setting methodology. Existing systems treat these as a single alignment check, producing scores that are neither transparent nor actionable.",
+      "Furthermore, organisations have hierarchical structures where team-level strategy is more relevant than company-wide strategy for individual contributors. Existing RAG systems retrieve documents without awareness of organisational proximity, weighting all documents equally regardless of their scope relationship to the user."
+    ]
+  },
+  "summary": {
+    "overview": [
+      "The present invention provides a computer-implemented method for evaluating goal alignment across three independent scoring dimensions: Strategic Alignment, Vertical Alignment, and Quality Alignment. Each dimension is computed independently using embedding-based semantic similarity, then combined using a configurable weighted formula with proportional normalisation when dimensions are unavailable.",
+      "The system introduces scope-aware document weighting that adjusts retrieval relevance based on organisational proximity (team documents weighted 1.2x, department 1.0x, company 0.8x). It further implements dynamic management chain traversal that searches up to three levels of the organisational hierarchy to find approved parent objectives when the direct supervisor has none.",
+      "The result is a composite alignment score (0–100) with a transparent per-dimension breakdown, warnings for low-scoring dimensions, and actionable suggestions for improvement. The system supports bilingual evaluation in English and Chinese."
+    ],
+    "key_innovations": [
+      "Three-dimensional alignment scoring (Strategic, Vertical, Quality)",
+      "Scope-aware document weighting based on organisational proximity",
+      "Dynamic management chain traversal with circular reference detection",
+      "Proportional weight normalisation when dimensions unavailable",
+      "Bilingual support with CJK character detection"
+    ]
+  },
+  "detailed_description": {
+    "system_architecture": "The alignment scoring system comprises three independent scoring engines, a composite calculator, and a scope-aware context retrieval module. The system receives as input an OKR (objective description plus key results), the user's organisational context (team, department, supervisor chain), and pre-embedded strategy documents stored in a vector database (pgvector).",
+    "components": [
+      {
+        "name": "Strategic Alignment",
+        "section_number": "3.2",
+        "weight": 0.40,
+        "description": "Measures how well an OKR aligns with organisational strategy documents. The system retrieves relevant documents from a vector database using the OKR text as a query, then applies scope-aware weighting.",
+        "sub_components": [
+          {
+            "name": "Team-scope documents",
+            "description": "Similarity score multiplied by 1.2 (capped at 100)"
+          },
+          {
+            "name": "Department-scope documents",
+            "description": "Similarity score multiplied by 1.0"
+          },
+          {
+            "name": "Company-scope documents",
+            "description": "Similarity score multiplied by 0.8"
+          },
+          {
+            "name": "OKR Reference Materials",
+            "description": "Playbooks and methodology books receive priority weight of 1.1x as primary grounding sources"
+          }
+        ]
+      },
+      {
+        "name": "Vertical Alignment",
+        "section_number": "3.3",
+        "weight": 0.40,
+        "description": "Measures how well an OKR connects to its parent objective or supervisor's approved objectives in the organisational hierarchy.",
+        "sub_components": [
+          {
+            "name": "Step 1: Parent Objective",
+            "description": "If the OKR has a designated parent objective, compute cosine similarity between the child OKR embedding and the parent OKR embedding (including key results)."
+          },
+          {
+            "name": "Step 2: Supervisor's Objectives",
+            "description": "If no parent is designated, retrieve the direct supervisor's APPROVED objectives and compute similarity against each, selecting the best match."
+          },
+          {
+            "name": "Step 3: Management Chain Traversal",
+            "description": "If the direct supervisor has no approved objectives, traverse up the management chain (maximum 3 levels) with circular reference detection, searching each level for approved objectives."
+          }
+        ]
+      },
+      {
+        "name": "Quality Alignment",
+        "section_number": "3.4",
+        "weight": 0.20,
+        "description": "Measures adherence to OKR methodology best practices.",
+        "sub_components": [
+          {
+            "name": "Measurability",
+            "description": "Whether key results contain quantitative targets. Detection uses regex patterns for percentages, counts, currency, ranges, and metric acronyms (NPS, CSAT, ROI). Chinese patterns detect measure words and Chinese numerals. A threshold of 50% measurable KRs flags the OKR as having measurable key results, adding a 10-point bonus."
+          },
+          {
+            "name": "OKR Structure",
+            "description": "Whether the objective has at least 2 key results, adding a 5-point bonus."
+          },
+          {
+            "name": "Methodology Grounding",
+            "description": "Semantic similarity against OKR reference materials (top_k=5 from vector database) forms the base quality score."
+          }
+        ]
+      },
+      {
+        "name": "Composite Score Calculation",
+        "section_number": "3.5",
+        "description": "The composite score is calculated using configurable weights that sum to 1.0. When one or more dimensions are unavailable (e.g., no strategy documents uploaded), the weights are normalised proportionally."
+      }
+    ],
+    "formulas": [
+      {
+        "name": "Composite Score",
+        "expression": "composite = (strategic × 0.40) + (vertical × 0.40) + (quality × 0.20)",
+        "variables": {
+          "strategic": "Strategic alignment score (0-100)",
+          "vertical": "Vertical alignment score (0-100)",
+          "quality": "Quality alignment score (0-100)"
+        }
+      },
+      {
+        "name": "Proportional Normalisation",
+        "expression": "effective_weight = original_weight / sum(available_weights)",
+        "variables": {
+          "original_weight": "Weight assigned to dimension",
+          "available_weights": "Sum of weights for available dimensions"
+        }
+      }
+    ],
+    "bilingual_support": {
+      "languages": ["English", "Chinese Traditional", "Chinese Simplified"],
+      "detection_method": "CJK Unified Ideograph character frequency (threshold: >30% of non-whitespace characters)",
+      "language_specific_patterns": {
+        "chinese_measure_words": ["個", "件", "次", "人", "台", "份", "項", "套", "筆"],
+        "chinese_action_verbs": ["提升", "增加", "達成", "完成", "降低"],
+        "chinese_range_expressions": ["從....到...."]
+      }
+    },
+    "caching_performance": {
+      "cache_type": "LRU (Least Recently Used)",
+      "cache_size": 256,
+      "eviction_policy": "LRU eviction when cache full",
+      "hit_rate": ">60% during batch alignment recalculation"
+    }
+  },
+  "claims": [
+    {
+      "claim_number": 1,
+      "claim_type": "independent",
+      "text": "A computer-implemented method for evaluating alignment of a goal statement within a hierarchical organisation, the method comprising: (a) computing a first alignment score by comparing the goal statement against strategy documents using embedding-based semantic similarity, wherein the strategy documents are weighted based on organisational scope proximity to the user, with team-scope documents receiving a higher weight than department-scope documents, and department-scope documents receiving a higher weight than company-scope documents; (b) computing a second alignment score by comparing the goal statement against parent objectives in a management hierarchy, including dynamically traversing up to N levels of the management chain when no direct parent objective is available; (c) computing a third alignment score by evaluating the goal statement against methodology best practices, including measuring quantifiability of associated key results; and (d) computing a composite alignment score as a weighted combination of the first, second, and third alignment scores, with proportional weight normalisation when one or more dimensions are unavailable.",
+      "key_elements": [
+        "Three-dimensional scoring",
+        "Scope-aware document weighting",
+        "Dynamic hierarchy traversal",
+        "Proportional normalisation"
+      ]
+    },
+    {
+      "claim_number": 2,
+      "claim_type": "dependent",
+      "depends_on": 1,
+      "text": "The method of claim 1, wherein the scope-based weighting comprises multiplying similarity scores by a team weight of 1.2, a department weight of 1.0, and a company weight of 0.8, with the weighted score capped at a maximum of 100.",
+      "key_elements": ["Specific weight values", "Score capping"]
+    },
+    {
+      "claim_number": 3,
+      "claim_type": "dependent",
+      "depends_on": 1,
+      "text": "The method of claim 1, wherein the dynamic management chain traversal includes circular reference detection to prevent infinite traversal loops in organisational hierarchies.",
+      "key_elements": ["Circular reference detection"]
+    },
+    {
+      "claim_number": 4,
+      "claim_type": "dependent",
+      "depends_on": 1,
+      "text": "The method of claim 1, wherein the measurability evaluation uses language-specific regex patterns to detect quantitative targets in both English and Chinese character sets, with a Chinese character detection threshold of 30% of non-whitespace characters.",
+      "key_elements": ["Bilingual support", "Language detection threshold"]
+    },
+    {
+      "claim_number": 5,
+      "claim_type": "dependent",
+      "depends_on": 1,
+      "text": "The method of claim 1, further comprising an embedding cache using least-recently-used eviction to avoid redundant vector database queries during batch alignment recalculation.",
+      "key_elements": ["LRU cache", "Performance optimisation"]
+    },
+    {
+      "claim_number": 6,
+      "claim_type": "dependent",
+      "depends_on": 1,
+      "text": "The method of claim 1, wherein the composite alignment score is returned as a structured breakdown comprising per-dimension scores, the calculation method used, warnings for low-scoring dimensions, and actionable suggestions for improvement.",
+      "key_elements": ["Structured output", "Actionable suggestions"]
+    }
+  ],
+  "drawings": [
+    {
+      "figure_number": 1,
+      "title": "System Architecture",
+      "description": "System architecture diagram showing three scoring engines, composite calculator, and scope-aware retrieval module",
+      "type": "architecture"
+    },
+    {
+      "figure_number": 2,
+      "title": "Alignment Scoring Flowchart",
+      "description": "Flowchart of the alignment scoring process from OKR input to composite score output",
+      "type": "flowchart"
+    },
+    {
+      "figure_number": 3,
+      "title": "Scope Hierarchy",
+      "description": "Scope hierarchy diagram showing team/department/company weighting with example scores",
+      "type": "hierarchy"
+    },
+    {
+      "figure_number": 4,
+      "title": "Management Chain Traversal",
+      "description": "Management chain traversal decision tree (direct parent → supervisor → skip-level → default)",
+      "type": "decision_tree"
+    },
+    {
+      "figure_number": 5,
+      "title": "Quality Dimension Scoring",
+      "description": "Quality dimension scoring flowchart with measurability bonus and structure bonus paths",
+      "type": "flowchart"
+    },
+    {
+      "figure_number": 6,
+      "title": "Weight Normalisation",
+      "description": "Weight normalisation logic when dimensions are unavailable",
+      "type": "flowchart"
+    }
+  ],
+  "prior_art": {
+    "reviewed_systems": [
+      {
+        "name": "WorkBoard, Tability, Weekdone",
+        "type": "product",
+        "description": "Commercial OKR platforms offer AI-assisted alignment suggestions",
+        "limitation": "Use single-dimensional similarity (parent-child matching only). None publish multi-dimensional composite scoring with scope weighting."
+      },
+      {
+        "name": "Standard RAG systems (LangChain, LlamaIndex)",
+        "type": "open_source",
+        "description": "Retrieve documents by semantic similarity",
+        "limitation": "No organisational scope awareness. Documents are treated equally regardless of their relationship to the user's position in the hierarchy."
+      }
+    ],
+    "differentiation": "The combination of three independent scoring dimensions, scope-weighted retrieval, dynamic hierarchy traversal, and proportional weight normalisation constitutes a non-obvious improvement over existing goal alignment systems.",
+    "search_terms_used": [
+      "OKR alignment scoring",
+      "multi-dimensional goal alignment",
+      "hierarchical objective scoring",
+      "scope-aware document retrieval",
+      "organizational goal management AI"
+    ]
+  },
+  "source_files": [
+    "src/okr_service/ai/alignment.py",
+    "src/okr_service/ai/context_retrieval.py",
+    "src/okr_service/ai/embeddings.py"
+  ],
+  "notes": {
+    "human_review_needed": [
+      "Verify claim language with patent counsel",
+      "Confirm prior art search is comprehensive",
+      "Review scope weight values for accuracy"
+    ],
+    "additional_context": "This disclosure is based on production code deployed in the VISTA OKR platform."
+  }
+}

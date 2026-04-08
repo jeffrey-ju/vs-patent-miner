@@ -1,0 +1,339 @@
+/* Patent Disclosure PDF Stylesheet - WeasyPrint Compatible */
+
+@page {
+    size: A4;
+    margin: 2.5cm;
+
+    @top-left {
+        content: "Patent Disclosure";
+        font-size: 10pt;
+        color: #585b5b;
+    }
+
+    @top-right {
+        content: string(app-number);
+        font-size: 10pt;
+        color: #585b5b;
+    }
+
+    @bottom-center {
+        content: counter(page);
+        font-size: 10pt;
+    }
+}
+
+@page :first {
+    @top-left { content: none; }
+    @top-right { content: none; }
+}
+
+/* Fonts */
+@font-face {
+    font-family: 'Noto Sans CJK TC';
+    src: local('Noto Sans CJK TC'), local('PingFang TC'), local('Microsoft JhengHei');
+}
+
+body {
+    font-family: 'Noto Sans', 'Noto Sans CJK TC', sans-serif;
+    font-size: 11pt;
+    line-height: 1.6;
+    color: #333;
+}
+
+/* Title Page */
+.title-page {
+    page-break-after: always;
+    text-align: center;
+    padding-top: 5cm;
+}
+
+.title-page h1 {
+    font-size: 28pt;
+    color: #005293;
+    margin-bottom: 1cm;
+}
+
+.title-page .subtitle {
+    font-size: 18pt;
+    color: #585b5b;
+    margin-bottom: 2cm;
+}
+
+.title-page .metadata {
+    text-align: left;
+    max-width: 60%;
+    margin: 0 auto;
+}
+
+.title-page .metadata table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.title-page .metadata td {
+    padding: 0.3cm 0;
+}
+
+.title-page .metadata td:first-child {
+    font-weight: bold;
+    width: 40%;
+}
+
+/* Application Number for header */
+.app-number {
+    string-set: app-number content();
+    display: none;
+}
+
+/* Headings */
+h1 {
+    font-size: 20pt;
+    color: #005293;
+    border-bottom: 2px solid #005293;
+    padding-bottom: 0.3cm;
+    margin-top: 1.5cm;
+    margin-bottom: 0.8cm;
+    page-break-after: avoid;
+}
+
+h2 {
+    font-size: 16pt;
+    color: #005293;
+    margin-top: 1cm;
+    margin-bottom: 0.5cm;
+    page-break-after: avoid;
+}
+
+h3 {
+    font-size: 13pt;
+    color: #333;
+    margin-top: 0.8cm;
+    margin-bottom: 0.4cm;
+    page-break-after: avoid;
+}
+
+/* Table of Contents */
+.toc {
+    page-break-after: always;
+}
+
+.toc h1 {
+    text-align: center;
+    border-bottom: none;
+}
+
+.toc ul {
+    list-style: none;
+    padding: 0;
+}
+
+.toc li {
+    margin: 0.3cm 0;
+}
+
+.toc a {
+    text-decoration: none;
+    color: #333;
+}
+
+.toc a::after {
+    content: leader('.') target-counter(attr(href), page);
+}
+
+/* Paragraphs */
+p {
+    text-align: justify;
+    margin-bottom: 0.5cm;
+}
+
+/* Lists */
+ul, ol {
+    margin-left: 1cm;
+    margin-bottom: 0.5cm;
+}
+
+li {
+    margin-bottom: 0.2cm;
+}
+
+/* Claims Section */
+.claims {
+    counter-reset: claim;
+}
+
+.claim {
+    margin-bottom: 0.8cm;
+    text-align: justify;
+}
+
+.claim-number {
+    font-weight: bold;
+    margin-right: 0.3cm;
+}
+
+.claim.independent {
+    font-weight: normal;
+}
+
+.claim.dependent {
+    margin-left: 1cm;
+}
+
+.claim-step {
+    display: block;
+    margin-left: 1.5cm;
+    text-indent: -0.5cm;
+}
+
+/* Tables */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 0.5cm 0;
+    font-size: 10pt;
+}
+
+th {
+    background-color: #005293;
+    color: white;
+    padding: 0.3cm;
+    text-align: left;
+}
+
+td {
+    border: 1px solid #ddd;
+    padding: 0.3cm;
+}
+
+tr:nth-child(even) {
+    background-color: #f8f9fa;
+}
+
+/* Code Blocks */
+pre, code {
+    font-family: 'Noto Sans Mono', monospace;
+    font-size: 9pt;
+    background-color: #f5f5f5;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+}
+
+pre {
+    padding: 0.5cm;
+    overflow-x: auto;
+    white-space: pre-wrap;
+}
+
+code {
+    padding: 0.1cm 0.2cm;
+}
+
+/* Figures */
+figure {
+    text-align: center;
+    margin: 1cm 0;
+    page-break-inside: avoid;
+}
+
+figure img {
+    max-width: 100%;
+    height: auto;
+}
+
+figcaption {
+    font-size: 10pt;
+    color: #585b5b;
+    margin-top: 0.3cm;
+}
+
+/* Prior Art Section */
+.prior-art-item {
+    border-left: 3px solid #005293;
+    padding-left: 0.5cm;
+    margin-bottom: 0.8cm;
+}
+
+.prior-art-item h4 {
+    margin: 0 0 0.2cm 0;
+    color: #005293;
+}
+
+.prior-art-item .limitation {
+    color: #d9534f;
+}
+
+.prior-art-item .differentiation {
+    color: #5cb85c;
+}
+
+/* Formulas */
+.formula {
+    background-color: #f0f7ff;
+    border: 1px solid #b8d4f0;
+    padding: 0.5cm;
+    margin: 0.5cm 0;
+    text-align: center;
+    font-family: 'Noto Sans Mono', monospace;
+}
+
+.formula-name {
+    font-weight: bold;
+    margin-bottom: 0.3cm;
+}
+
+/* Components */
+.component {
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 0.5cm;
+    margin: 0.5cm 0;
+}
+
+.component-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 0.3cm;
+    margin-bottom: 0.3cm;
+}
+
+.component-name {
+    font-weight: bold;
+    color: #005293;
+}
+
+.component-weight {
+    background-color: #005293;
+    color: white;
+    padding: 0.1cm 0.3cm;
+    border-radius: 3px;
+    font-size: 9pt;
+}
+
+/* Drawings Section */
+.drawings-list {
+    counter-reset: figure;
+}
+
+.drawing-item {
+    counter-increment: figure;
+    margin-bottom: 0.5cm;
+}
+
+.drawing-item::before {
+    content: "Figure " counter(figure) ": ";
+    font-weight: bold;
+}
+
+/* Print-specific */
+@media print {
+    a {
+        text-decoration: none;
+        color: inherit;
+    }
+
+    .no-print {
+        display: none;
+    }
+}

@@ -1,0 +1,257 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Patent Disclosure",
+  "description": "Structured format for patent disclosure documents",
+  "type": "object",
+  "required": ["metadata", "problem_statement", "summary", "detailed_description", "claims", "prior_art"],
+  "properties": {
+    "metadata": {
+      "type": "object",
+      "required": ["title", "field_of_invention", "application_number", "inventors", "assignee"],
+      "properties": {
+        "title": {
+          "type": "string",
+          "description": "Full title of the invention"
+        },
+        "title_zh": {
+          "type": "string",
+          "description": "Chinese title (optional)"
+        },
+        "field_of_invention": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Technical fields, e.g., ['Artificial Intelligence', 'Enterprise Software']"
+        },
+        "application_number": {
+          "type": "string",
+          "description": "Internal tracking number, e.g., 'VS-OKR-2026-001'"
+        },
+        "priority_date": {
+          "type": "string",
+          "default": "To be established upon provisional filing"
+        },
+        "inventors": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Names of inventors or team"
+        },
+        "assignee": {
+          "type": "string",
+          "description": "Company or organization owning the patent"
+        },
+        "generated_date": {
+          "type": "string",
+          "format": "date",
+          "description": "Date disclosure was generated"
+        },
+        "innovation_id": {
+          "type": "string",
+          "description": "Reference to innovation ID from scan"
+        }
+      }
+    },
+    "problem_statement": {
+      "type": "object",
+      "required": ["background"],
+      "properties": {
+        "background": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "2-3 paragraphs describing existing problems"
+        }
+      }
+    },
+    "summary": {
+      "type": "object",
+      "required": ["overview"],
+      "properties": {
+        "overview": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "2-3 paragraphs of high-level solution description"
+        },
+        "key_innovations": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Bullet points of main innovations"
+        }
+      }
+    },
+    "detailed_description": {
+      "type": "object",
+      "required": ["system_architecture", "components"],
+      "properties": {
+        "system_architecture": {
+          "type": "string",
+          "description": "Overview of system architecture"
+        },
+        "components": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["name", "description"],
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "section_number": {
+                "type": "string",
+                "description": "e.g., '3.2'"
+              },
+              "weight": {
+                "type": "number",
+                "description": "Weight if applicable, e.g., 0.40"
+              },
+              "description": {
+                "type": "string"
+              },
+              "sub_components": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "name": { "type": "string" },
+                    "description": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "formulas": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": { "type": "string" },
+              "expression": { "type": "string" },
+              "variables": {
+                "type": "object",
+                "additionalProperties": { "type": "string" }
+              }
+            }
+          }
+        },
+        "bilingual_support": {
+          "type": "object",
+          "properties": {
+            "languages": {
+              "type": "array",
+              "items": { "type": "string" }
+            },
+            "detection_method": { "type": "string" },
+            "language_specific_patterns": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "array",
+                "items": { "type": "string" }
+              }
+            }
+          }
+        },
+        "caching_performance": {
+          "type": "object",
+          "properties": {
+            "cache_type": { "type": "string" },
+            "cache_size": { "type": "integer" },
+            "eviction_policy": { "type": "string" },
+            "hit_rate": { "type": "string" }
+          }
+        },
+        "configuration": {
+          "type": "object",
+          "description": "Configurable parameters",
+          "additionalProperties": true
+        }
+      }
+    },
+    "claims": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["claim_number", "claim_type", "text"],
+        "properties": {
+          "claim_number": {
+            "type": "integer"
+          },
+          "claim_type": {
+            "type": "string",
+            "enum": ["independent", "dependent"]
+          },
+          "depends_on": {
+            "type": "integer",
+            "description": "For dependent claims, which claim it depends on"
+          },
+          "text": {
+            "type": "string",
+            "description": "Full claim text"
+          },
+          "key_elements": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Key elements covered by this claim"
+          }
+        }
+      }
+    },
+    "prior_art": {
+      "type": "object",
+      "required": ["reviewed_systems", "differentiation"],
+      "properties": {
+        "reviewed_systems": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["name", "description", "limitation"],
+            "properties": {
+              "name": { "type": "string" },
+              "type": {
+                "type": "string",
+                "enum": ["patent", "product", "paper", "open_source"]
+              },
+              "description": { "type": "string" },
+              "limitation": { "type": "string" }
+            }
+          }
+        },
+        "differentiation": {
+          "type": "string",
+          "description": "Summary of how invention differs from prior art"
+        },
+        "search_terms_used": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "drawings": {
+      "type": "array",
+      "description": "Optional - diagram descriptions for patent figures",
+      "items": {
+        "type": "object",
+        "required": ["figure_number", "title", "description"],
+        "properties": {
+          "figure_number": {
+            "type": "integer"
+          },
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string",
+            "description": "Description of what the drawing should show"
+          },
+          "type": {
+            "type": "string",
+            "enum": ["architecture", "flowchart", "hierarchy", "decision_tree", "data_flow", "scoring", "comparison"]
+          },
+          "mermaid_code": {
+            "type": "string",
+            "description": "Optional Mermaid.js diagram code"
+          }
+        }
+      }
+    }
+  },
+  "additionalProperties": false
+}

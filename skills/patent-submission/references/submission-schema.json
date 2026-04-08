@@ -1,0 +1,179 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Patent Submission Presentation",
+  "description": "Structured format for patent submission presentations",
+  "type": "object",
+  "required": ["metadata", "slides"],
+  "properties": {
+    "metadata": {
+      "type": "object",
+      "required": ["title_zh", "title_en", "patent_id", "date"],
+      "properties": {
+        "title_zh": {
+          "type": "string",
+          "description": "Chinese title"
+        },
+        "title_en": {
+          "type": "string",
+          "description": "English title"
+        },
+        "patent_id": {
+          "type": "string",
+          "description": "Reference to disclosure application number"
+        },
+        "innovation_id": {
+          "type": "string",
+          "description": "Reference to innovation ID from scan"
+        },
+        "date": {
+          "type": "string",
+          "format": "date"
+        },
+        "disclosure_source": {
+          "type": "string",
+          "description": "Path to source disclosure JSON"
+        },
+        "generated_date": {
+          "type": "string",
+          "format": "date"
+        }
+      }
+    },
+    "slides": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["slide_number", "type"],
+        "properties": {
+          "slide_number": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 10
+          },
+          "type": {
+            "type": "string",
+            "enum": ["title", "problem", "solution", "architecture", "features", "claims", "closing"]
+          },
+          "title": {
+            "type": "string",
+            "description": "Slide title (for non-title slides)"
+          },
+          "content": {
+            "type": "object",
+            "properties": {
+              "title_zh": {
+                "type": "string"
+              },
+              "title_en": {
+                "type": "string"
+              },
+              "subtitle": {
+                "type": "string"
+              },
+              "application_number": {
+                "type": "string"
+              },
+              "inventors": {
+                "type": "array",
+                "items": { "type": "string" }
+              },
+              "date": {
+                "type": "string"
+              },
+              "bullets": {
+                "type": "array",
+                "items": { "type": "string" },
+                "description": "Bullet points for content"
+              },
+              "description": {
+                "type": "string",
+                "description": "Paragraph description"
+              },
+              "diagram_description": {
+                "type": "string",
+                "description": "Description of diagram for architecture slides"
+              },
+              "claims_summary": {
+                "type": "array",
+                "items": { "type": "string" },
+                "description": "Summarized claims for claims slide"
+              },
+              "closing_message": {
+                "type": "string"
+              },
+              "next_steps": {
+                "type": "array",
+                "items": { "type": "string" }
+              },
+              "contact": {
+                "type": "string"
+              }
+            }
+          },
+          "speaker_notes": {
+            "type": "string",
+            "description": "Notes for presenter"
+          },
+          "diagram": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": ["flowchart", "architecture", "hierarchy", "comparison", "sequence"]
+              },
+              "description": {
+                "type": "string"
+              },
+              "mermaid_code": {
+                "type": "string",
+                "description": "Mermaid.js diagram code"
+              }
+            }
+          }
+        }
+      }
+    },
+    "diagrams": {
+      "type": "array",
+      "description": "All diagrams in the presentation",
+      "items": {
+        "type": "object",
+        "required": ["slide_number", "type", "description"],
+        "properties": {
+          "slide_number": {
+            "type": "integer"
+          },
+          "type": {
+            "type": "string",
+            "enum": ["flowchart", "architecture", "hierarchy", "comparison", "sequence"]
+          },
+          "description": {
+            "type": "string"
+          },
+          "mermaid_code": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "notes": {
+      "type": "object",
+      "properties": {
+        "presentation_tips": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "anticipated_questions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "question": { "type": "string" },
+              "suggested_answer": { "type": "string" }
+            }
+          }
+        }
+      }
+    }
+  }
+}

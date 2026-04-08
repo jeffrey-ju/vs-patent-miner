@@ -1,0 +1,7 @@
+# VS Patent Miner - Python Dependencies
+
+# Required for PPTX generation
+python-pptx>=0.6.21
+
+# Optional: Alternative PDF generation
+# weasyprint>=52.0

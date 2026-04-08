@@ -1,0 +1,105 @@
+\documentclass[$if(fontsize)$$fontsize$,$endif$$if(lang)$$babel-lang$,$endif$]{article}
+
+% Geometry
+\usepackage[margin=1in]{geometry}
+
+% CJK Support
+\usepackage{xeCJK}
+\setCJKmainfont{Noto Sans CJK TC}
+\setCJKsansfont{Noto Sans CJK TC}
+\setCJKmonofont{Noto Sans Mono CJK TC}
+
+% Fonts
+\usepackage{fontspec}
+\setmainfont{Noto Sans}
+\setsansfont{Noto Sans}
+\setmonofont{Noto Sans Mono}
+
+% Tables
+\usepackage{longtable}
+\usepackage{booktabs}
+\usepackage{array}
+
+% Graphics
+\usepackage{graphicx}
+\usepackage{float}
+
+% Colors
+\usepackage{xcolor}
+\definecolor{vsblue}{RGB}{0, 82, 147}
+\definecolor{vsgray}{RGB}{88, 89, 91}
+
+% Headers
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\textcolor{vsgray}{Patent Disclosure}}
+\fancyhead[R]{\small\textcolor{vsgray}{$application_number$}}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+
+% Title formatting
+\usepackage{titlesec}
+\titleformat{\section}{\Large\bfseries\color{vsblue}}{\thesection}{1em}{}
+\titleformat{\subsection}{\large\bfseries\color{vsblue}}{\thesubsection}{1em}{}
+\titleformat{\subsubsection}{\normalsize\bfseries}{\thesubsubsection}{1em}{}
+
+% Hyperlinks
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=vsblue,
+    urlcolor=vsblue,
+    citecolor=vsblue
+}
+
+% Code blocks
+\usepackage{listings}
+\lstset{
+    basicstyle=\ttfamily\small,
+    breaklines=true,
+    frame=single,
+    backgroundcolor=\color{gray!10}
+}
+
+% Lists
+\usepackage{enumitem}
+\setlist[itemize]{leftmargin=*}
+\setlist[enumerate]{leftmargin=*}
+
+% Custom commands
+\newcommand{\claimindent}{\hspace{2em}}
+
+\begin{document}
+
+% Title Page
+\begin{titlepage}
+\centering
+\vspace*{2cm}
+
+{\Huge\bfseries\color{vsblue} $title$\par}
+\vspace{1cm}
+{\Large Patent Disclosure Document\par}
+\vspace{2cm}
+
+\begin{tabular}{ll}
+\textbf{Application Number:} & $application_number$ \\
+\textbf{Priority Date:} & $priority_date$ \\
+\textbf{Inventors:} & $for(inventors)$$inventors$$sep$, $endfor$ \\
+\textbf{Assignee:} & $assignee$ \\
+\end{tabular}
+
+\vfill
+
+{\large\today\par}
+
+\end{titlepage}
+
+% Table of Contents
+\tableofcontents
+\newpage
+
+% Main Content
+$body$
+
+\end{document}
