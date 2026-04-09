@@ -552,10 +552,8 @@ After scoring, recommend:
 
 ## Commands
 
-- `/patent-disclosure [id]` — Generate disclosure for specific innovation (JSON + PDF + quality score)
-- `/patent-disclosure [id] --no-pdf` — Generate JSON + quality score only, skip PDF
-- `/patent-disclosure --all` — Generate disclosures for all innovations
-- `/patent-disclosure --score-only [id]` — Score existing disclosure without regenerating
+- `/patent-disclosure` — Generate disclosures for ALL innovations found by `/patent-mining`
+- `/patent-disclosure [id]` — Generate disclosure for a specific innovation (e.g., `/patent-disclosure INV-001`)
 
 ## Example Usage
 
