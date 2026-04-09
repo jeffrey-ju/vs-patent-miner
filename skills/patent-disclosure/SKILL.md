@@ -393,24 +393,50 @@ ls -la output/disclosures/
 
 **DO NOT skip the script execution. The script ensures files are written to disk.**
 
-## Document Structure (7 Sections)
+## Document Structure (8 Sections)
 
-The disclosure document MUST contain exactly these 7 sections — no more, no less:
+The disclosure JSON MUST contain these sections:
 
-1. **Metadata** — Title, application number, inventors, assignee, field of invention
-2. **Abstract** — Single paragraph (EN max 150 words, TW Chinese max 300 chars). Required by USPTO and TIPO.
+1. **Metadata** — Title, title_zh, application number, inventors, assignee, field of invention
+2. **Abstract** — EN max 150 words, TW Chinese max 300 chars
 3. **Problem Statement** — Background and limitations of existing approaches
-4. **Summary of Invention** — High-level solution overview
+4. **Summary of Invention** — Overview paragraphs + key_innovations list
 5. **Detailed Description** — Components, architecture, formulas, algorithms
-6. **Claims** — Independent and dependent patent claims (method + system + CRM triad)
-7. **Prior Art** — Reviewed systems and differentiation
+6. **Claims** — Independent (method + system + CRM triad) and dependent claims
+7. **Drawings** — Architecture diagrams with Mermaid code (REQUIRED)
+8. **Prior Art** — Reviewed systems and differentiation
 
-**DO NOT include:**
-- Implementation details
-- Quality checklist
-- Source code references
-- Testing information
-- Any sections beyond the 7 listed above
+### Drawings — REQUIRED
+
+Every disclosure MUST include a `drawings` array with at least 3 figures. Each drawing MUST have a `mermaid_code` field containing valid Mermaid syntax. The PDF generator renders these as diagrams.
+
+```json
+{
+  "drawings": [
+    {
+      "figure_number": 1,
+      "title": "System Architecture",
+      "description": "Architecture diagram showing major components and data flow",
+      "type": "architecture",
+      "mermaid_code": "graph TD\n    A[Input] --> B[Module 1]\n    B --> C[Module 2]\n    C --> D[Output]"
+    },
+    {
+      "figure_number": 2,
+      "title": "Process Flowchart",
+      "description": "Flowchart of the scoring process",
+      "type": "flowchart",
+      "mermaid_code": "flowchart TD\n    A[Start] --> B{Decision}\n    B -->|Yes| C[Action]\n    B -->|No| D[Other]"
+    }
+  ]
+}
+```
+
+**Mermaid diagram types to include:**
+- `graph TD` — System architecture showing components and connections
+- `flowchart TD` — Process flow with decision points
+- `graph LR` — Data flow or pipeline diagrams
+
+Without `mermaid_code`, the PDF will only show text descriptions instead of actual diagrams.
 
 ### Step 9: Automatic PDF Generation
 
