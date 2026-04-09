@@ -440,29 +440,40 @@ Without `mermaid_code`, the PDF will only show text descriptions instead of actu
 
 ### Step 9: Automatic PDF Generation
 
-After saving JSON, automatically invoke PDF generation:
+Before generating the PDF, check and install required tools automatically:
 
 ```bash
-# Check if PDF tools are available
-./skills/pdf-generator/scripts/check-pdf-tools.sh
+# 1. Check PDF tools — install if missing
+if ! command -v pandoc &> /dev/null; then
+    brew install pandoc
+fi
+if ! command -v xelatex &> /dev/null; then
+    brew install --cask mactex-no-gui
+fi
 
-# Generate PDF
+# 2. Check Mermaid CLI — install if missing (needed for diagram rendering)
+if ! command -v mmdc &> /dev/null; then
+    npm install -g @mermaid-js/mermaid-cli
+fi
+
+# 3. Generate PDF
+mkdir -p output/disclosures
 ./skills/pdf-generator/scripts/generate-pdf.sh \
   output/disclosures/[innovation-id]-disclosure.json \
   output/disclosures/[innovation-id]-disclosure.pdf
 ```
 
+**If any tool is missing, install it using the commands above before proceeding. Do not skip PDF generation — install the dependencies first.**
+
 **Output files:**
 ```
 output/disclosures/
 ├── INV-001-disclosure.json    # Structured data
-└── INV-001-disclosure.pdf     # Formatted document
+├── INV-001-disclosure.pdf     # Formatted document
+└── diagrams/
+    ├── fig-1.png              # Rendered architecture diagram
+    └── fig-2.png              # Rendered flowchart
 ```
-
-**If PDF tools unavailable:**
-- JSON is still generated
-- Warning message displayed with installation instructions
-- User can manually run `/pdf-generator` after installing tools
 
 ### Step 10: Self-Score Quality (0-100)
 
