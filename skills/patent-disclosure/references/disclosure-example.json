@@ -200,13 +200,15 @@
       "figure_number": 1,
       "title": "System Architecture",
       "description": "System architecture diagram showing three scoring engines, composite calculator, and scope-aware retrieval module",
-      "type": "architecture"
+      "type": "architecture",
+      "mermaid_code": "graph TD\n    A[OKR Input] --> B[Context Retrieval Module]\n    B --> C[Strategic Alignment Engine]\n    B --> D[Vertical Alignment Engine]\n    B --> E[Quality Alignment Engine]\n    C --> F[Composite Calculator]\n    D --> F\n    E --> F\n    F --> G[Alignment Score 0-100]\n    B --> H[(Vector Database)]\n    B --> I[(Org Hierarchy)]"
     },
     {
       "figure_number": 2,
       "title": "Alignment Scoring Flowchart",
       "description": "Flowchart of the alignment scoring process from OKR input to composite score output",
-      "type": "flowchart"
+      "type": "flowchart",
+      "mermaid_code": "flowchart TD\n    A[Receive OKR] --> B{Dimensions Available?}\n    B -->|All 3| C[Compute Strategic Score]\n    B -->|Partial| D[Normalise Weights]\n    C --> E[Compute Vertical Score]\n    E --> F[Compute Quality Score]\n    D --> F\n    F --> G[Apply Weights]\n    G --> H[Composite Score]\n    H --> I{Score >= 70?}\n    I -->|Yes| J[Aligned]\n    I -->|No| K[Generate Suggestions]"
     },
     {
       "figure_number": 3,

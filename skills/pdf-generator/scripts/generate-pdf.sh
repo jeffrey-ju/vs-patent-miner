@@ -246,26 +246,72 @@ if claims:
         md.append('## Independent Claims')
         md.append('')
         for claim in ind_claims:
-            md.append(f'Claim {claim[\"claim_number\"]}. {claim[\"text\"]}')
+            md.append(f'**Claim {claim[\"claim_number\"]}.** {claim[\"text\"]}')
             md.append('')
     if dep_claims:
         md.append('## Dependent Claims')
         md.append('')
         for claim in dep_claims:
-            md.append(f'Claim {claim[\"claim_number\"]}. {claim[\"text\"]}')
+            md.append(f'**Claim {claim[\"claim_number\"]}.** {claim[\"text\"]}')
             md.append('')
     sec += 1
 
 # Drawings
+import subprocess, os, tempfile
 drawings = data.get('drawings', [])
 if drawings:
     md.append(f'# {sec}. Description of Drawings')
     md.append('')
-    md.append('The following drawings should be prepared for the formal patent application:')
-    md.append('')
+
+    # Check if mermaid-cli is available
+    has_mmdc = False
+    try:
+        subprocess.run(['mmdc', '--version'], capture_output=True, check=True)
+        has_mmdc = True
+    except (FileNotFoundError, subprocess.CalledProcessError):
+        pass
+
     for drawing in drawings:
-        md.append(f'- FIG. {drawing[\"figure_number\"]}: {drawing.get(\"title\", \"\")} \\u2014 {drawing.get(\"description\", \"\")}')
-    md.append('')
+        fig_num = drawing.get('figure_number', '')
+        title = drawing.get('title', '')
+        desc = drawing.get('description', '')
+        mermaid = drawing.get('mermaid_code', '')
+
+        md.append(f'### FIG. {fig_num}: {title}')
+        md.append('')
+
+        if mermaid and has_mmdc:
+            # Render mermaid diagram to PNG
+            out_dir = os.path.dirname('$INPUT_FILE') or '.'
+            diag_dir = os.path.join(out_dir, 'diagrams')
+            os.makedirs(diag_dir, exist_ok=True)
+            diag_path = os.path.join(diag_dir, f'fig-{fig_num}.png')
+
+            with tempfile.NamedTemporaryFile(mode='w', suffix='.mmd', delete=False) as mmd:
+                mmd.write(mermaid)
+                mmd_path = mmd.name
+
+            try:
+                subprocess.run(
+                    ['mmdc', '-i', mmd_path, '-o', diag_path, '-b', 'transparent', '-w', '800'],
+                    capture_output=True, check=True
+                )
+                md.append(f'![FIG. {fig_num}: {title}]({diag_path})')
+                md.append('')
+            except subprocess.CalledProcessError:
+                md.append(f'*{desc}*')
+                md.append('')
+            finally:
+                os.unlink(mmd_path)
+        elif mermaid:
+            # Mermaid code present but mmdc not available — show description
+            md.append(f'*{desc}*')
+            md.append('')
+            md.append(f'*(Mermaid diagram available — install mermaid-cli to render: npm install -g @mermaid-js/mermaid-cli)*')
+            md.append('')
+        else:
+            md.append(f'*{desc}*')
+            md.append('')
     sec += 1
 
 # Prior Art
