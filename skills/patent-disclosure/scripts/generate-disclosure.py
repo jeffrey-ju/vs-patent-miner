@@ -36,6 +36,10 @@ def create_disclosure_structure(innovation_data: dict) -> dict:
             "generated_date": today,
             "innovation_id": innovation_id
         },
+        "abstract": innovation_data.get('abstract', {
+            "en": "",
+            "zh_tw": ""
+        }),
         "problem_statement": {
             "background": innovation_data.get('problem_statement', {}).get('background', [])
         },

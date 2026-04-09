@@ -66,7 +66,32 @@ Write 2-3 paragraphs covering:
 - Key innovations
 - Benefits and improvements
 
-### Step 4: Extract Detailed Description
+### Step 4: Generate Abstract
+
+Write a concise abstract for both English and Traditional Chinese (繁體中文).
+
+**English abstract rules (USPTO 37 CFR 1.72(b)):**
+- Single paragraph, maximum 150 words
+- Must state: (1) what the invention is, (2) what problem it solves, (3) how it works
+- Do NOT use phrases like "the invention", "this disclosure", or "is disclosed"
+- Use the same terminology as Claim 1
+- No legal jargon — write for a technical reader
+
+**Traditional Chinese abstract rules (TIPO):**
+- Maximum 300 characters (繁體中文)
+- Must use Taiwan terminology — see patent-writing-guide.md for term mapping
+- Key terms: 演算法 (not 算法), 軟體 (not 软件), 伺服器 (not 服务器)
+
+```json
+{
+  "abstract": {
+    "en": "A computer-implemented method for [what it is] that addresses [problem] by [how it works]. The method comprises [key steps]. The system achieves [key benefit].",
+    "zh_tw": "一種電腦實施的[what]方法，透過[how]解決[problem]。該方法包含[key steps]，實現[benefit]。"
+  }
+}
+```
+
+### Step 5: Extract Detailed Description
 
 For each component:
 
@@ -91,30 +116,71 @@ Include:
 - Data flows
 - Special handling (bilingual, caching, etc.)
 
-### Step 5: Draft Claims
+### Step 6: Draft Claims
 
-Generate patent claims following this structure:
+Generate patent claims following the method/system/CRM triad and antecedent basis rules. See `references/patent-writing-guide.md` for the full writing guide.
 
-**Independent Claim (Claim 1)**:
+#### Claim Triad (3 Independent Claims Required)
+
+Proper software patent protection requires three independent claims covering the same concept:
+
+**Independent Claim 1 — Method:**
 ```
-A computer-implemented method for [main innovation], comprising:
-(a) [first technical step];
-(b) [second technical step];
-(c) [third technical step]; and
-(d) [final step producing result].
+A computer-implemented method for [function], comprising:
+(a) receiving, by a processor, [first input];
+(b) computing, by the processor, a first [result] by [technical step];
+(c) determining, by the processor, a second [result] based on [technical step]; and
+(d) generating, by the processor, [output] based on the first [result] and the second [result].
 ```
 
-**Dependent Claims (Claims 2-N)**:
+**Independent Claim 2 — System:**
 ```
-The method of claim [N], wherein [specific implementation detail].
+A system comprising:
+a processor; and
+a non-transitory computer-readable medium storing instructions that, when executed by the processor, cause the processor to:
+[same steps as method claim, adapted to system language].
 ```
+
+**Independent Claim 3 — Computer-Readable Medium (CRM):**
+```
+A non-transitory computer-readable medium storing instructions that, when executed by a processor, cause the processor to perform operations comprising:
+[same steps as method claim].
+```
+
+**Dependent Claims (Claims 4-N)**:
+```
+The method of claim 1, wherein [specific implementation detail].
+```
+
+#### Antecedent Basis Rules (CRITICAL)
+
+Antecedent basis failures are the #1 USPTO rejection reason. Follow these rules strictly:
+
+- **First mention** of any element uses "a" or "an": `"receiving a goal statement"`
+- **Subsequent mentions** use "the" or "said": `"comparing the goal statement"`
+- **Never** introduce a new element with "the" — if "the score" appears, "a score" must appear earlier
+- **Every element** in a dependent claim must trace back to an element in the claim it depends on
+- **Consistent terminology** — once you call it "goal statement", never switch to "objective text"
+
+#### Forbidden Language
+
+Do NOT use these phrases anywhere in claims or specification:
+
+| Forbidden | Why | Use Instead |
+|-----------|-----|-------------|
+| "the invention" | Limits claim scope during prosecution | "the disclosed method", "the system", or "in one embodiment" |
+| "the present invention" | Same — courts interpret as applying to ALL claims | "in some implementations" |
+| "always", "never", "must" | Absolute language limits claims | "in one embodiment", "may" |
+| "obvious", "simple", "easily" | Admission against interest for patentability | Remove entirely |
+| "important", "critical", "key" | Implies other features are non-essential | Remove or rephrase |
 
 Aim for:
-- 1 broad independent claim
-- 5-10 dependent claims covering specifics
+- 3 independent claims (method + system + CRM triad)
+- 5-10 dependent claims covering specifics per independent claim
 - Claims covering key differentiators
+- Every element properly introduced with antecedent basis
 
-### Step 6: Prior Art Search & Differentiation
+### Step 7: Prior Art Search & Differentiation
 
 Conduct comprehensive prior art search to validate novelty and document differentiation.
 
@@ -200,13 +266,13 @@ Provide manual search guidance with links:
 - arXiv: https://arxiv.org
 - Google Scholar: https://scholar.google.com
 
-### Step 7: Generate JSON Output
+### Step 8: Generate JSON Output
 
 **CRITICAL: You MUST execute the generation script to write files to disk.**
 
 After gathering all information (Steps 1-6), you MUST:
 
-1. Create the disclosure JSON object with all 6 sections
+1. Create the disclosure JSON object with all 7 sections
 2. Pipe the JSON to the generation script:
 
 ```bash
@@ -218,6 +284,10 @@ cat << 'EOF' | python3 skills/patent-disclosure/scripts/generate-disclosure.py [
   "field_of_invention": ["..."],
   "inventors": ["..."],
   "assignee": "...",
+  "abstract": {
+    "en": "A computer-implemented method for ... comprising ...",
+    "zh_tw": "一種電腦實施的...方法，包含..."
+  },
   "problem_statement": {
     "background": ["paragraph 1", "paragraph 2"]
   },
@@ -251,25 +321,26 @@ ls -la output/disclosures/
 
 **DO NOT skip the script execution. The script ensures files are written to disk.**
 
-## Document Structure (6 Sections Only)
+## Document Structure (7 Sections)
 
-The disclosure document MUST contain exactly these 6 sections — no more, no less:
+The disclosure document MUST contain exactly these 7 sections — no more, no less:
 
 1. **Metadata** — Title, application number, inventors, assignee, field of invention
-2. **Problem Statement** — Background and limitations of existing approaches
-3. **Summary of Invention** — High-level solution overview
-4. **Detailed Description** — Components, architecture, formulas, algorithms
-5. **Claims** — Independent and dependent patent claims
-6. **Prior Art** — Reviewed systems and differentiation
+2. **Abstract** — Single paragraph (EN max 150 words, TW Chinese max 300 chars). Required by USPTO and TIPO.
+3. **Problem Statement** — Background and limitations of existing approaches
+4. **Summary of Invention** — High-level solution overview
+5. **Detailed Description** — Components, architecture, formulas, algorithms
+6. **Claims** — Independent and dependent patent claims (method + system + CRM triad)
+7. **Prior Art** — Reviewed systems and differentiation
 
 **DO NOT include:**
 - Implementation details
 - Quality checklist
 - Source code references
 - Testing information
-- Any sections beyond the 6 listed above
+- Any sections beyond the 7 listed above
 
-### Step 8: Automatic PDF Generation
+### Step 9: Automatic PDF Generation
 
 After saving JSON, automatically invoke PDF generation:
 
@@ -294,6 +365,14 @@ output/disclosures/
 - JSON is still generated
 - Warning message displayed with installation instructions
 - User can manually run `/pdf-generator` after installing tools
+
+### Step 10: Post-Generation Review
+
+After the disclosure is generated, recommend the following next steps:
+
+1. **Run `/patent-review [id]`** — Automated quality check scoring 0–100. Flags antecedent basis errors, missing claim triad, spec-claim misalignment, and prior art gaps.
+2. **Run `/patent-writer [id]`** — Rewrites claims to proper legal standard, generates missing abstracts, improves spec prose quality, and fixes bilingual content.
+3. **Attorney review** — Human patent counsel should review before filing. The automated tools catch mechanical issues, not legal strategy.
 
 ## Commands
 

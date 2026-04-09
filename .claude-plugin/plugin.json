@@ -1,7 +1,7 @@
 {
   "name": "vs-patent-miner",
-  "version": "1.1.0",
-  "description": "A Claude Code plugin that analyzes any codebase to identify patentable innovations and generates structured patent documentation (JSON, PDF, PPTX).",
+  "version": "1.2.0",
+  "description": "A Claude Code plugin that analyzes any codebase to identify patentable innovations and generates structured patent documentation (JSON, PDF, PPTX) with USPTO/TIPO compliance checking.",
   "author": {
     "name": "Jeffrey Ju",
     "url": "https://github.com/jeffrey-ju"
@@ -17,7 +17,11 @@
     "code-analysis",
     "prior-art",
     "pptx",
-    "pdf"
+    "pdf",
+    "USPTO",
+    "TIPO",
+    "claims",
+    "patent-review"
   ],
   "skills": "./skills/"
 }

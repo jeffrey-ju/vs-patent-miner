@@ -14,6 +14,10 @@
     "generated_date": "2026-04-08",
     "innovation_id": "INV-001"
   },
+  "abstract": {
+    "en": "A computer-implemented method for evaluating alignment of goal statements within a hierarchical organisation using three independent scoring dimensions. The method computes a strategic alignment score by comparing goal statements against scope-weighted strategy documents, a vertical alignment score by traversing management hierarchies to find parent objectives, and a quality alignment score by evaluating adherence to goal-setting methodology. A composite score is calculated as a weighted combination with proportional normalisation when dimensions are unavailable, providing a transparent per-dimension breakdown with actionable improvement suggestions.",
+    "zh_tw": "一種用於評估階層式組織內目標陳述對齊程度的電腦實施方法，採用三個獨立評分維度。該方法透過將目標陳述與範圍加權之策略文件進行比較來計算策略對齊分數，透過遍歷管理階層以尋找上級目標來計算垂直對齊分數，以及透過評估是否符合目標設定方法論來計算品質對齊分數。以加權組合計算複合分數，當維度不可用時進行比例正規化，提供透明的各維度分數分解及可操作的改善建議。"
+  },
   "problem_statement": {
     "background": [
       "Enterprise goal management systems require employees to create Objectives and Key Results (OKRs) that align with organisational strategy. Existing systems evaluate alignment using simplistic approaches: keyword matching between child and parent goals, or single-dimensional similarity scoring. These approaches fail to capture the multi-faceted nature of organisational alignment.",
@@ -23,7 +27,7 @@
   },
   "summary": {
     "overview": [
-      "The present invention provides a computer-implemented method for evaluating goal alignment across three independent scoring dimensions: Strategic Alignment, Vertical Alignment, and Quality Alignment. Each dimension is computed independently using embedding-based semantic similarity, then combined using a configurable weighted formula with proportional normalisation when dimensions are unavailable.",
+      "The disclosed method evaluates goal alignment across three independent scoring dimensions: Strategic Alignment, Vertical Alignment, and Quality Alignment. Each dimension is computed independently using embedding-based semantic similarity, then combined using a configurable weighted formula with proportional normalisation when dimensions are unavailable.",
       "The system introduces scope-aware document weighting that adjusts retrieval relevance based on organisational proximity (team documents weighted 1.2x, department 1.0x, company 0.8x). It further implements dynamic management chain traversal that searches up to three levels of the organisational hierarchy to find approved parent objectives when the direct supervisor has none.",
       "The result is a composite alignment score (0–100) with a transparent per-dimension breakdown, warnings for low-scoring dimensions, and actionable suggestions for improvement. The system supports bilingual evaluation in English and Chinese."
     ],
