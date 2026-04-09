@@ -68,19 +68,42 @@ Write 2-3 paragraphs covering:
 
 ### Step 4: Generate Abstract
 
-Write a concise abstract for both English and Traditional Chinese (繁體中文).
+Write filing-quality abstracts for both English and Traditional Chinese (繁體中文).
 
-**English abstract rules (USPTO 37 CFR 1.72(b)):**
-- Single paragraph, maximum 150 words
-- Must state: (1) what the invention is, (2) what problem it solves, (3) how it works
-- Do NOT use phrases like "the invention", "this disclosure", or "is disclosed"
-- Use the same terminology as Claim 1
-- No legal jargon — write for a technical reader
+#### English Abstract Process (USPTO 37 CFR 1.72(b))
 
-**Traditional Chinese abstract rules (TIPO):**
-- Maximum 300 characters (繁體中文)
-- Must use Taiwan terminology — see patent-writing-guide.md for term mapping
-- Key terms: 演算法 (not 算法), 軟體 (not 软件), 伺服器 (not 服务器)
+1. **Read Claim 1** (method claim) and the summary section
+2. **Write a single paragraph**, maximum 150 words, that states:
+   - What the invention is
+   - What problem it solves
+   - How it works (key technical steps)
+3. **Use the same terminology as Claim 1** — every technical term in the abstract must match the claim language exactly
+4. **Verify word count** — must be ≤ 150 words
+5. **Scan for forbidden phrases** and remove:
+   - "the invention", "the present invention"
+   - "is disclosed", "this disclosure"
+   - "obviously", "simply", "easily"
+
+#### Traditional Chinese Abstract Process (TIPO)
+
+1. **Translate the English abstract** into Traditional Chinese
+2. **Apply the TW term mapping** — replace any mainland terminology:
+
+   | Mainland (禁用) | Taiwan (使用) |
+   |-----------------|--------------|
+   | 算法 | 演算法 |
+   | 软件 | 軟體 |
+   | 服务器 | 伺服器 |
+   | 数据库 | 資料庫 |
+   | 信息 | 資訊 |
+   | 接口 | 介面 |
+   | 缓存 | 快取 |
+
+3. **Verify formal register** (書面語) — no colloquial expressions
+4. **Verify character count** — must be ≤ 300 characters
+5. **Verify character set** is Traditional (繁體), not Simplified (简体)
+
+#### Abstract Template
 
 ```json
 {
@@ -116,15 +139,33 @@ Include:
 - Data flows
 - Special handling (bilingual, caching, etc.)
 
+#### Specification Prose Quality Rules
+
+Apply these rules while writing the detailed description to ensure filing-quality prose:
+
+1. **Claim-spec alignment** — every element mentioned in any claim MUST appear in the detailed description with a full explanation of how it works. If a claim says "computing a weighted alignment score", the spec must describe the weighting mechanism.
+2. **Embodiment variations** — include "In some implementations..." or "In one embodiment..." variations for key features to provide flexibility during prosecution.
+3. **No value judgments** — remove "superior", "optimal", "best", "ideal", "perfect". Use neutral language describing what the system does, not how good it is.
+4. **Terminology consistency** — use the exact same terms as the claims throughout the spec. If the claim says "goal statement", never switch to "objective text" or "target description" in the spec.
+5. **Formula completeness** — every formula must define all variables with units and ranges where applicable.
+
 ### Step 6: Draft Claims
 
-Generate patent claims following the method/system/CRM triad and antecedent basis rules. See `references/patent-writing-guide.md` for the full writing guide.
+Generate filing-quality patent claims following the method/system/CRM triad. See `references/patent-writing-guide.md` for the full writing guide.
 
-#### Claim Triad (3 Independent Claims Required)
+#### 6.1 Identify Core Inventive Steps
 
-Proper software patent protection requires three independent claims covering the same concept:
+Before writing any claims, extract the core inventive steps from the code analysis:
 
-**Independent Claim 1 — Method:**
+1. List the 3-6 key technical steps that make this innovation novel
+2. Order them logically (input → processing → output)
+3. Identify which steps differentiate from prior art
+4. These steps form the basis for all three independent claims
+
+#### 6.2 Write Method Claim (Independent Claim 1)
+
+Write the method claim first — it serves as the foundation for the other two:
+
 ```
 A computer-implemented method for [function], comprising:
 (a) receiving, by a processor, [first input];
@@ -133,7 +174,15 @@ A computer-implemented method for [function], comprising:
 (d) generating, by the processor, [output] based on the first [result] and the second [result].
 ```
 
-**Independent Claim 2 — System:**
+- Preamble: "A computer-implemented method for [function], comprising:"
+- Each step as a gerund phrase with "by a processor" attribution
+- Final step produces the key output
+- Keep independent claims broad — no implementation specifics
+
+#### 6.3 Write System Claim (Independent Claim 2)
+
+Adapt the method claim to system language:
+
 ```
 A system comprising:
 a processor; and
@@ -141,44 +190,76 @@ a non-transitory computer-readable medium storing instructions that, when execut
 [same steps as method claim, adapted to system language].
 ```
 
-**Independent Claim 3 — Computer-Readable Medium (CRM):**
+#### 6.4 Write CRM Claim (Independent Claim 3)
+
+Adapt the method claim to computer-readable medium:
+
 ```
 A non-transitory computer-readable medium storing instructions that, when executed by a processor, cause the processor to perform operations comprising:
 [same steps as method claim].
 ```
 
-**Dependent Claims (Claims 4-N)**:
+#### 6.5 Write Dependent Claims (Claims 4-N)
+
 ```
 The method of claim 1, wherein [specific implementation detail].
 ```
 
-#### Antecedent Basis Rules (CRITICAL)
+- Each dependent claim adds one specific implementation detail
+- Duplicate relevant dependents for system claim (e.g., "The system of claim 2, wherein...") and CRM claim (e.g., "The non-transitory computer-readable medium of claim 3, wherein...")
+- Target 5-10 dependent claims per independent claim
+- Cover key differentiators from prior art
 
-Antecedent basis failures are the #1 USPTO rejection reason. Follow these rules strictly:
+#### 6.6 Renumber All Claims
 
-- **First mention** of any element uses "a" or "an": `"receiving a goal statement"`
-- **Subsequent mentions** use "the" or "said": `"comparing the goal statement"`
-- **Never** introduce a new element with "the" — if "the score" appears, "a score" must appear earlier
-- **Every element** in a dependent claim must trace back to an element in the claim it depends on
-- **Consistent terminology** — once you call it "goal statement", never switch to "objective text"
+After drafting, renumber sequentially:
+- Claim 1: Method (independent)
+- Claim 2: System (independent)
+- Claim 3: CRM (independent)
+- Claims 4-N: Dependent claims referencing the correct parent
 
-#### Forbidden Language
+#### 6.7 Antecedent Basis Audit (CRITICAL — DO NOT SKIP)
 
-Do NOT use these phrases anywhere in claims or specification:
+Antecedent basis failures are the #1 USPTO rejection reason. After drafting all claims, run this audit:
 
-| Forbidden | Why | Use Instead |
-|-----------|-----|-------------|
-| "the invention" | Limits claim scope during prosecution | "the disclosed method", "the system", or "in one embodiment" |
-| "the present invention" | Same — courts interpret as applying to ALL claims | "in some implementations" |
-| "always", "never", "must" | Absolute language limits claims | "in one embodiment", "may" |
-| "obvious", "simple", "easily" | Admission against interest for patentability | Remove entirely |
-| "important", "critical", "key" | Implies other features are non-essential | Remove or rephrase |
+1. **For each claim**, extract every noun phrase
+2. **Check first mention** uses "a" or "an": `"receiving a goal statement"`
+3. **Check subsequent mentions** use "the" or "said": `"comparing the goal statement"`
+4. **Check dependent claims** — every element must trace back to an element in the parent claim chain
+5. **Fix any violations** before proceeding
 
-Aim for:
+**Example fix:**
+```
+BEFORE (violation): "...comparing the alignment score with the threshold..."
+       (neither "alignment score" nor "threshold" was introduced)
+
+AFTER  (fixed): "...comparing a computed alignment score with a predefined threshold..."
+```
+
+**Consistency rule:** Once you call it "goal statement", never switch to "objective text" — same term throughout all claims and specification.
+
+#### 6.8 Forbidden Language Scan (MANDATORY)
+
+After drafting all claims AND specification text, scan ALL text fields and apply replacements:
+
+| Find | Replace with |
+|------|-------------|
+| "the invention" | "the disclosed method" or "the system" |
+| "the present invention" | "in some implementations" |
+| "obviously" / "simply" / "easily" | Remove entirely |
+| "important" / "critical" / "key" (as adjectives) | Remove or rephrase neutrally |
+| "always" / "never" / "must" | "in one embodiment" / "may" / "can" |
+| "preferred embodiment" | "in one embodiment" |
+
+This scan covers claims, abstract, problem statement, summary, and detailed description — every text field in the disclosure.
+
+#### Targets
+
 - 3 independent claims (method + system + CRM triad)
 - 5-10 dependent claims covering specifics per independent claim
 - Claims covering key differentiators
 - Every element properly introduced with antecedent basis
+- Zero forbidden language instances
 
 ### Step 7: Prior Art Search & Differentiation
 
@@ -370,9 +451,8 @@ output/disclosures/
 
 After the disclosure is generated, recommend the following next steps:
 
-1. **Run `/patent-review [id]`** — Automated quality check scoring 0–100. Flags antecedent basis errors, missing claim triad, spec-claim misalignment, and prior art gaps.
-2. **Run `/patent-writer [id]`** — Rewrites claims to proper legal standard, generates missing abstracts, improves spec prose quality, and fixes bilingual content.
-3. **Attorney review** — Human patent counsel should review before filing. The automated tools catch mechanical issues, not legal strategy.
+1. **Run `/patent-review [id]`** — Automated quality check scoring 0–100. Flags any remaining antecedent basis errors, spec-claim misalignment, or prior art gaps. Target score ≥ 80 before proceeding.
+2. **Attorney review** — Human patent counsel should review before filing. The automated tools catch mechanical issues, not legal strategy.
 
 ## Commands
 

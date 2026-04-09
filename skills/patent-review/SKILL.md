@@ -10,7 +10,7 @@ Scores patent disclosure documents on a 0-100 scale and flags issues by severity
 ## When to Use
 
 - After `/patent-disclosure` generates a new disclosure
-- After `/patent-writer` improves a disclosure
+- After re-running `/patent-disclosure` to address issues
 - Before sending a disclosure to patent counsel
 - When validating existing disclosures for completeness
 
@@ -36,7 +36,7 @@ The review scores across 6 dimensions, each weighted:
 - **90-100:** Filing-ready — send to attorney
 - **70-89:** Good draft — minor issues to address
 - **50-69:** Needs work — significant gaps
-- **0-49:** Major rewrite needed — use `/patent-writer` first
+- **0-49:** Major rewrite needed — re-run `/patent-disclosure` with additional context
 
 ## Process
 
@@ -170,7 +170,7 @@ DIMENSION BREAKDOWN:
 CRITICAL ISSUES (must fix):
 ------------------------------------
 [C1] Missing system claim (Independent Claim 2)
-     → Run /patent-writer INV-001 to generate claim triad
+     → Re-run /patent-disclosure INV-001 to generate claim triad
 
 [C2] Antecedent basis: Claim 4 references "the threshold"
      but no "a threshold" appears in Claim 1
@@ -221,9 +221,7 @@ For each CRITICAL and WARNING issue, provide:
 ## Integration with Other Skills
 
 ```
-/patent-disclosure INV-001    → Generate draft disclosure
-/patent-review INV-001        → Score and identify issues
-/patent-writer INV-001        → Fix identified issues
-/patent-review INV-001        → Re-score to verify fixes
+/patent-disclosure INV-001    → Generate filing-quality disclosure
+/patent-review INV-001        → Score and identify any remaining issues
 /patent-submission INV-001    → Generate presentation once score ≥ 80
 ```
