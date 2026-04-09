@@ -376,6 +376,29 @@ cat << 'EOF' | python3 skills/patent-disclosure/scripts/generate-disclosure.py [
   "claims": [
     {"claim_number": 1, "claim_type": "independent", "text": "..."}
   ],
+  "drawings": [
+    {
+      "figure_number": 1,
+      "title": "System Architecture",
+      "description": "Architecture diagram showing major components",
+      "type": "architecture",
+      "mermaid_code": "graph TD\n    A[Input] --> B[Component 1]\n    B --> C[Component 2]\n    C --> D[Output]"
+    },
+    {
+      "figure_number": 2,
+      "title": "Process Flowchart",
+      "description": "Flowchart showing the main process",
+      "type": "flowchart",
+      "mermaid_code": "flowchart TD\n    A[Start] --> B{Decision}\n    B -->|Yes| C[Action 1]\n    B -->|No| D[Action 2]"
+    },
+    {
+      "figure_number": 3,
+      "title": "Data Flow",
+      "description": "Data flow between system components",
+      "type": "flowchart",
+      "mermaid_code": "graph LR\n    A[Source] --> B[Process] --> C[Store]"
+    }
+  ],
   "prior_art": {
     "reviewed_systems": [
       {"name": "...", "type": "product", "description": "...", "limitation": "..."}
