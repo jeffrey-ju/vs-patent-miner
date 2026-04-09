@@ -78,133 +78,6 @@ trap "rm -rf $TEMP_DIR" EXIT
 # Convert JSON to intermediate format
 if [[ "$DOC_TYPE" == "disclosure" ]]; then
     # Generate Markdown from disclosure JSON
-    python3 << 'PYTHON_SCRIPT'
-import json
-import sys
-
-with open(sys.argv[1] if len(sys.argv) > 1 else '$INPUT_FILE') as f:
-    data = json.load(f)
-
-md = []
-
-# Metadata
-meta = data.get('metadata', {})
-md.append(f"---")
-md.append(f"title: \"{meta.get('title', 'Patent Disclosure')}\"")
-md.append(f"application_number: \"{meta.get('application_number', 'TBD')}\"")
-md.append(f"priority_date: \"{meta.get('priority_date', 'TBD')}\"")
-md.append(f"inventors:")
-for inv in meta.get('inventors', ['TBD']):
-    md.append(f"  - \"{inv}\"")
-md.append(f"assignee: \"{meta.get('assignee', 'TBD')}\"")
-md.append(f"---")
-md.append("")
-
-# Field of Invention
-fields = meta.get('field_of_invention', [])
-if fields:
-    md.append("# Field of Invention")
-    md.append("")
-    md.append(", ".join(fields))
-    md.append("")
-
-# Problem Statement
-problem = data.get('problem_statement', {})
-if problem.get('background'):
-    md.append("# Problem Statement")
-    md.append("")
-    for para in problem['background']:
-        md.append(para)
-        md.append("")
-
-# Summary
-summary = data.get('summary', {})
-if summary.get('overview'):
-    md.append("# Summary of Invention")
-    md.append("")
-    for para in summary['overview']:
-        md.append(para)
-        md.append("")
-
-# Detailed Description
-detail = data.get('detailed_description', {})
-if detail:
-    md.append("# Detailed Description")
-    md.append("")
-
-    if detail.get('system_architecture'):
-        md.append("## System Architecture")
-        md.append("")
-        md.append(detail['system_architecture'])
-        md.append("")
-
-    if detail.get('components'):
-        md.append("## Components")
-        md.append("")
-        for comp in detail['components']:
-            weight = f" (Weight: {comp['weight']})" if comp.get('weight') else ""
-            md.append(f"### {comp['name']}{weight}")
-            md.append("")
-            md.append(comp.get('description', ''))
-            md.append("")
-
-            for sub in comp.get('sub_components', []):
-                md.append(f"**{sub['name']}**: {sub.get('description', '')}")
-                md.append("")
-
-    if detail.get('formulas'):
-        md.append("## Formulas")
-        md.append("")
-        for formula in detail['formulas']:
-            md.append(f"**{formula['name']}**")
-            md.append("")
-            md.append(f"`{formula['expression']}`")
-            md.append("")
-
-# Claims
-claims = data.get('claims', [])
-if claims:
-    md.append("# Claims")
-    md.append("")
-    for claim in claims:
-        prefix = "" if claim.get('claim_type') == 'independent' else f"(Depends on Claim {claim.get('depends_on', 1)}) "
-        md.append(f"**Claim {claim['claim_number']}**: {prefix}{claim['text']}")
-        md.append("")
-
-# Drawings
-drawings = data.get('drawings', [])
-if drawings:
-    md.append("# Description of Drawings")
-    md.append("")
-    for drawing in drawings:
-        md.append(f"**Figure {drawing['figure_number']}**: {drawing['title']}")
-        md.append("")
-        md.append(drawing.get('description', ''))
-        md.append("")
-
-# Prior Art
-prior = data.get('prior_art', {})
-if prior:
-    md.append("# Prior Art")
-    md.append("")
-    for system in prior.get('reviewed_systems', []):
-        md.append(f"## {system['name']}")
-        md.append("")
-        md.append(system.get('description', ''))
-        md.append("")
-        if system.get('limitation'):
-            md.append(f"**Limitation**: {system['limitation']}")
-            md.append("")
-
-    if prior.get('differentiation'):
-        md.append("## Differentiation")
-        md.append("")
-        md.append(prior['differentiation'])
-        md.append("")
-
-print("\n".join(md))
-PYTHON_SCRIPT
-
     python3 -c "
 import json
 with open('$INPUT_FILE') as f:
@@ -227,6 +100,18 @@ if fields:
     md.append('')
     md.append(', '.join(fields))
     md.append('')
+abstract = data.get('abstract', {})
+if abstract:
+    md.append('# Abstract')
+    md.append('')
+    if abstract.get('en'):
+        md.append(abstract['en'])
+        md.append('')
+    if abstract.get('zh_tw'):
+        md.append('**摘要 (Traditional Chinese)**')
+        md.append('')
+        md.append(abstract['zh_tw'])
+        md.append('')
 problem = data.get('problem_statement', {})
 if problem.get('background'):
     md.append('# Problem Statement')
