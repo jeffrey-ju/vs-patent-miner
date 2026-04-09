@@ -3,7 +3,7 @@
   "title": "Patent Disclosure",
   "description": "Structured format for patent disclosure documents",
   "type": "object",
-  "required": ["metadata", "abstract", "problem_statement", "summary", "detailed_description", "claims", "prior_art"],
+  "required": ["metadata", "abstract", "problem_statement", "summary", "detailed_description", "claims", "drawings", "prior_art"],
   "properties": {
     "metadata": {
       "type": "object",
@@ -243,10 +243,11 @@
     },
     "drawings": {
       "type": "array",
-      "description": "Optional - diagram descriptions for patent figures",
+      "minItems": 3,
+      "description": "REQUIRED — Patent figure diagrams with Mermaid code for rendering. Must include at least 3 figures: system architecture, process flowchart, and data flow.",
       "items": {
         "type": "object",
-        "required": ["figure_number", "title", "description"],
+        "required": ["figure_number", "title", "description", "mermaid_code"],
         "properties": {
           "figure_number": {
             "type": "integer"
@@ -256,7 +257,7 @@
           },
           "description": {
             "type": "string",
-            "description": "Description of what the drawing should show"
+            "description": "Description of what the drawing shows"
           },
           "type": {
             "type": "string",
@@ -264,7 +265,7 @@
           },
           "mermaid_code": {
             "type": "string",
-            "description": "Optional Mermaid.js diagram code"
+            "description": "REQUIRED — Valid Mermaid.js diagram code (graph TD, flowchart TD, or graph LR). This is rendered as a PNG image in the PDF."
           }
         }
       }

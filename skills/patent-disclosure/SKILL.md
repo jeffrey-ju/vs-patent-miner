@@ -338,13 +338,58 @@ Provide manual search guidance with links:
 - arXiv: https://arxiv.org
 - Google Scholar: https://scholar.google.com
 
-### Step 8: Generate JSON Output
+### Step 8: Generate Mermaid Diagrams (DO NOT SKIP)
+
+Before writing the JSON, you MUST create Mermaid diagrams. This step is consistently skipped — do not skip it.
+
+Generate at least 3 diagrams:
+
+**FIG. 1 — System Architecture** (use `graph TD`):
+```mermaid
+graph TD
+    A[Input: Goal Statement] --> B[Embedding Service]
+    B --> C[Strategic Alignment Engine]
+    B --> D[Vertical Alignment Engine]
+    B --> E[Quality Alignment Engine]
+    C --> F[Composite Score Calculator]
+    D --> F
+    E --> F
+    F --> G[Alignment Score 0-100]
+```
+
+**FIG. 2 — Process Flowchart** (use `flowchart TD`):
+```mermaid
+flowchart TD
+    A[Receive Input] --> B{Check Type}
+    B -->|Type A| C[Process A]
+    B -->|Type B| D[Process B]
+    C --> E[Compute Score]
+    D --> E
+    E --> F{Score >= Threshold?}
+    F -->|Yes| G[Pass]
+    F -->|No| H[Generate Warnings]
+```
+
+**FIG. 3 — Data Flow or Hierarchy** (use `graph LR`):
+```mermaid
+graph LR
+    A[User] --> B[Team Docs]
+    A --> C[Dept Docs]
+    A --> D[Company Docs]
+    B --> E[Score: 1.2x weight]
+    C --> F[Score: 1.0x weight]
+    D --> G[Score: 0.8x weight]
+```
+
+Replace the example content with actual diagrams based on the innovation's architecture. Store these in the `drawings` array with `mermaid_code` field — the PDF generator renders them as images.
+
+### Step 9: Generate JSON Output
 
 **CRITICAL: You MUST execute the generation script to write files to disk.**
 
-After gathering all information (Steps 1-7), you MUST:
+After gathering all information (Steps 1-8), you MUST:
 
-1. Create the disclosure JSON object with all 7 sections
+1. Create the disclosure JSON object with all 8 sections (including `drawings` with `mermaid_code`)
 2. Pipe the JSON to the generation script:
 
 ```bash
@@ -429,6 +474,8 @@ The disclosure JSON MUST contain these sections:
 7. **Drawings** — Architecture diagrams with Mermaid code (REQUIRED)
 8. **Prior Art** — Reviewed systems and differentiation
 
+**CRITICAL: The `drawings` array with `mermaid_code` is the most commonly skipped section. You MUST verify it exists in the JSON before writing to disk. If your JSON has no `drawings` field, STOP and add it.**
+
 ### Drawings — REQUIRED
 
 Every disclosure MUST include a `drawings` array with at least 3 figures. Each drawing MUST have a `mermaid_code` field containing valid Mermaid syntax. The PDF generator renders these as diagrams.
@@ -461,7 +508,7 @@ Every disclosure MUST include a `drawings` array with at least 3 figures. Each d
 
 Without `mermaid_code`, the PDF will only show text descriptions instead of actual diagrams.
 
-### Step 9: Automatic PDF Generation
+### Step 10: Automatic PDF Generation
 
 Before generating the PDF, check and install required tools automatically:
 
@@ -498,7 +545,7 @@ output/disclosures/
     └── fig-2.png              # Rendered flowchart
 ```
 
-### Step 10: Self-Score Quality (0-100)
+### Step 11: Self-Score Quality (0-100)
 
 After generating the disclosure, immediately score it across 6 dimensions. Output the score report alongside the document.
 
@@ -593,7 +640,7 @@ RECOMMENDATION: [next step based on score]
 
 Since quality rules are enforced during generation (Steps 4-6), scores should typically be ≥ 80. If the score is unexpectedly low, report the issues — do not silently rewrite the disclosure.
 
-### Step 11: Recommend Next Steps
+### Step 12: Recommend Next Steps
 
 After scoring, recommend:
 

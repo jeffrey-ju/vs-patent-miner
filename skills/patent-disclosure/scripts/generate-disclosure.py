@@ -52,6 +52,7 @@ def create_disclosure_structure(innovation_data: dict) -> dict:
             "components": []
         }),
         "claims": innovation_data.get('claims', []),
+        "drawings": innovation_data.get('drawings', []),
         "prior_art": innovation_data.get('prior_art', {
             "reviewed_systems": [],
             "differentiation": ""
@@ -101,6 +102,22 @@ def main():
 
     # Generate disclosure structure
     disclosure = create_disclosure_structure(innovation_data)
+
+    # Validate drawings — warn if missing (most commonly skipped section)
+    drawings = disclosure.get('drawings', innovation_data.get('drawings', []))
+    if not drawings:
+        print("\033[1;33mWARNING: No 'drawings' field found — PDF will lack diagrams.\033[0m", file=sys.stderr)
+        print("Add a 'drawings' array with 'mermaid_code' fields to include architecture diagrams in the PDF.", file=sys.stderr)
+    else:
+        # Ensure drawings are in the disclosure
+        if 'drawings' not in disclosure:
+            disclosure['drawings'] = drawings
+        missing_mermaid = [d for d in drawings if not d.get('mermaid_code')]
+        if missing_mermaid:
+            figs = ', '.join(f"FIG. {d.get('figure_number', '?')}" for d in missing_mermaid)
+            print(f"\033[1;33mWARNING: Drawings {figs} lack 'mermaid_code' — will render as text only.\033[0m", file=sys.stderr)
+        else:
+            print(f"\033[0;32m✓ {len(drawings)} drawings with mermaid_code found — diagrams will render in PDF.\033[0m")
 
     # Write to file
     with open(output_path, 'w', encoding='utf-8') as f:
