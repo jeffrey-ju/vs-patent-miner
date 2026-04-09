@@ -5,20 +5,23 @@ description: Generate filing-quality patent disclosure documents with built-in q
 
 # Patent Disclosure Generator
 
-<EXECUTE-IMMEDIATELY>
-When this skill is invoked, DO NOT display instructions or notes. IMMEDIATELY begin executing the process below:
+<CRITICAL-INSTRUCTION>
+YOU MUST USE TOOLS TO DO REAL WORK. DO NOT SIMULATE OR SUMMARISE.
 
-1. If an innovation ID is provided (e.g., `/patent-disclosure INV-001`), load that innovation and generate its disclosure.
-2. If no ID is provided (`/patent-disclosure`), first run `/patent-mining` to scan the codebase, then generate disclosures for ALL innovations found.
-3. For each disclosure: read the source code, generate the 7-section JSON, write it to disk, generate the PDF, score it, and output the score report.
+When this skill is invoked you MUST immediately start calling tools:
+- Use the **Read** tool to read actual source files
+- Use the **Grep** and **Glob** tools to search the codebase
+- Use the **Write** tool to create the disclosure JSON file
+- Use the **Bash** tool to run `python3 skills/patent-disclosure/scripts/generate-disclosure.py` and `./skills/pdf-generator/scripts/generate-pdf.sh`
 
-Do NOT ask clarifying questions unless absolutely necessary. Start working immediately.
-</EXECUTE-IMMEDIATELY>
+If you output text like "[Reads source files]" or "[Generates disclosure]" WITHOUT actually calling the Read/Write/Bash tools, you have FAILED. Every action must be a real tool call that produces real files on disk.
 
-## Input
+**Workflow:**
+1. No ID provided → Use Glob/Grep/Read to scan the codebase for patentable innovations, THEN generate a disclosure for each
+2. ID provided → Load that innovation's details and generate its disclosure
 
-- `/patent-disclosure` — Scan codebase for ALL innovations, generate disclosures for each
-- `/patent-disclosure [id]` — Generate disclosure for a specific innovation
+START BY CALLING A TOOL. Your first action must be a Glob or Read tool call, not text output.
+</CRITICAL-INSTRUCTION>
 
 ## Process
 
