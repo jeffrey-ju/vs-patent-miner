@@ -5,26 +5,20 @@ description: Generate filing-quality patent disclosure documents with built-in q
 
 # Patent Disclosure Generator
 
-Generate filing-quality patent disclosure documents with built-in quality scoring (JSON + PDF + score).
+<EXECUTE-IMMEDIATELY>
+When this skill is invoked, DO NOT display instructions or notes. IMMEDIATELY begin executing the process below:
 
-## When to Use
+1. If an innovation ID is provided (e.g., `/patent-disclosure INV-001`), load that innovation and generate its disclosure.
+2. If no ID is provided (`/patent-disclosure`), first run `/patent-mining` to scan the codebase, then generate disclosures for ALL innovations found.
+3. For each disclosure: read the source code, generate the 7-section JSON, write it to disk, generate the PDF, score it, and output the score report.
 
-- After running `/patent-mining` to identify innovations
-- When user asks to "create disclosure", "write patent", "document innovation"
-- When preparing formal patent documentation
+Do NOT ask clarifying questions unless absolutely necessary. Start working immediately.
+</EXECUTE-IMMEDIATELY>
 
-## Input Requirements
+## Input
 
-1. **Innovation ID** from `/patent-mining` scan results, OR
-2. **Direct description** of the innovation with:
-   - Title
-   - Technical description
-   - Source file locations
-   - Problem it solves
-
-## Output Format
-
-Generate a JSON file following the schema in `references/disclosure-schema.json`.
+- `/patent-disclosure` — Scan codebase for ALL innovations, generate disclosures for each
+- `/patent-disclosure [id]` — Generate disclosure for a specific innovation
 
 ## Process
 
