@@ -1,11 +1,11 @@
 ---
 name: patent-disclosure
-description: Generate structured JSON for patent disclosure documents. Use after identifying innovations with /patent-mining, or when the user wants to create a patent disclosure for a specific innovation.
+description: Generate filing-quality patent disclosure documents with built-in quality scoring. Produces JSON + PDF + quality score (0-100). Use after identifying innovations with /patent-mining, or when the user wants to create a patent disclosure for a specific innovation.
 ---
 
 # Patent Disclosure Generator
 
-Generate comprehensive patent disclosure documents in structured JSON format.
+Generate filing-quality patent disclosure documents with built-in quality scoring (JSON + PDF + score).
 
 ## When to Use
 
@@ -265,7 +265,7 @@ This scan covers claims, abstract, problem statement, summary, and detailed desc
 
 Conduct comprehensive prior art search to validate novelty and document differentiation.
 
-#### 6.1 Extract Search Terms
+#### 7.1 Extract Search Terms
 
 From the innovation, extract:
 
@@ -276,7 +276,7 @@ From the innovation, extract:
 | **Domain** | Industry vocabulary | "enterprise goal management", "performance management" |
 | **Alternative** | Synonyms | "KPI alignment", "objective scoring" |
 
-#### 6.2 Search Technical Documentation (Context7)
+#### 7.2 Search Technical Documentation (Context7)
 
 If Context7 MCP is available:
 
@@ -290,7 +290,7 @@ If Context7 MCP is available:
    - context7:query-docs(libraryId, "multi-dimensional evaluation")
 ```
 
-#### 6.3 Search Patent Databases
+#### 7.3 Search Patent Databases
 
 Use web search with these patterns:
 
@@ -300,7 +300,7 @@ Use web search with these patterns:
 | USPTO | `"[innovation]" site:patft.uspto.gov` |
 | WIPO | `"[innovation]" site:patentscope.wipo.int` |
 
-#### 6.4 Search Academic Literature
+#### 7.4 Search Academic Literature
 
 | Database | Search Pattern |
 |----------|----------------|
@@ -308,7 +308,7 @@ Use web search with these patterns:
 | IEEE | `"[innovation]" site:ieeexplore.ieee.org` |
 | ACM | `"[innovation]" site:dl.acm.org` |
 
-#### 6.5 Assess Relevance
+#### 7.5 Assess Relevance
 
 For each result found, score relevance:
 
@@ -325,7 +325,7 @@ For each result found, score relevance:
 - 7-9: High relevance — may need to narrow claims
 - 10-12: Critical — consult patent counsel
 
-#### 6.6 Document Findings
+#### 7.6 Document Findings
 
 For each relevant prior art, record:
 
@@ -339,7 +339,7 @@ For each relevant prior art, record:
 }
 ```
 
-#### 6.7 If Context7 Unavailable
+#### 7.7 If Context7 Unavailable
 
 Provide manual search guidance with links:
 - Google Patents: https://patents.google.com
@@ -351,7 +351,7 @@ Provide manual search guidance with links:
 
 **CRITICAL: You MUST execute the generation script to write files to disk.**
 
-After gathering all information (Steps 1-6), you MUST:
+After gathering all information (Steps 1-7), you MUST:
 
 1. Create the disclosure JSON object with all 7 sections
 2. Pipe the JSON to the generation script:
@@ -540,7 +540,7 @@ RECOMMENDATION: [next step based on score]
 - **50-69:** Needs work — significant gaps remain
 - **0-49:** Major issues — re-run with additional context
 
-If score < 70 and CRITICAL issues exist, **automatically fix** them in the JSON before writing to disk. Then re-score. Only output the final version.
+Since quality rules are enforced during generation (Steps 4-6), scores should typically be ≥ 80. If the score is unexpectedly low, report the issues — do not silently rewrite the disclosure.
 
 ### Step 11: Recommend Next Steps
 
