@@ -447,19 +447,115 @@ output/disclosures/
 - Warning message displayed with installation instructions
 - User can manually run `/pdf-generator` after installing tools
 
-### Step 10: Post-Generation Review
+### Step 10: Self-Score Quality (0-100)
 
-After the disclosure is generated, recommend the following next steps:
+After generating the disclosure, immediately score it across 6 dimensions. Output the score report alongside the document.
 
-1. **Run `/patent-review [id]`** — Automated quality check scoring 0–100. Flags any remaining antecedent basis errors, spec-claim misalignment, or prior art gaps. Target score ≥ 80 before proceeding.
-2. **Attorney review** — Human patent counsel should review before filing. The automated tools catch mechanical issues, not legal strategy.
+#### Scoring Dimensions
+
+| Dimension | Weight | What to Check |
+|---|---|---|
+| **Claims Quality** | 30% | Triad present, antecedent basis, scope strategy |
+| **Abstract Completeness** | 15% | EN ≤150 words, TW ≤300 chars, both present |
+| **Specification Coverage** | 20% | Every claim element described in spec |
+| **Language Compliance** | 15% | No forbidden phrases, consistent terminology |
+| **Prior Art** | 10% | ≥2 systems reviewed, differentiation stated |
+| **Bilingual Quality** | 10% | TW terminology correct, Traditional characters, formal register |
+
+#### Claims Quality (30 points)
+
+**Triad check (10 points):**
+- Method claim present: 4 points
+- System claim present: 3 points
+- CRM claim present: 3 points
+- Missing any → CRITICAL flag
+
+**Antecedent basis audit (10 points):**
+- 0 violations: 10 points
+- 1-2 violations: 7 points + WARNING per violation
+- 3-5 violations: 4 points + CRITICAL
+- 6+ violations: 0 points + CRITICAL
+
+**Scope and structure (10 points):**
+- Independent claims are broad (no implementation specifics): 3 points
+- Dependent claims add specificity incrementally: 3 points
+- At least 5 dependent claims per independent: 2 points
+- Claims cover key differentiators from prior art: 2 points
+
+#### Abstract Completeness (15 points)
+
+**English (8 points):** Present (3), ≤150 words (2), states what/problem/how (3)
+**TW Chinese (7 points):** Present (3), ≤300 chars (2), uses TW terminology (2)
+
+#### Specification Coverage (20 points)
+
+**Claim-spec alignment (12 points):** All elements covered (12), 1-2 missing (8 + WARNING), 3+ missing (4 + CRITICAL)
+**Spec quality (8 points):** Architecture described (2), components described (2), formulas defined (2), embodiment variations present (2)
+
+#### Language Compliance (15 points)
+
+**Forbidden language (10 points):** "the invention"/"the present invention" (−3 each, CRITICAL), "obviously"/"simply"/"easily" (−2 each), "always"/"never"/"must" (−1 each), "preferred embodiment" (−1)
+**Terminology consistency (5 points):** Same terms throughout (3), no unexplained acronyms (1), terms defined on first use (1)
+
+#### Prior Art (10 points)
+
+≥2 systems reviewed (4), each has limitation stated (3), differentiation summary present (3)
+
+#### Bilingual Quality (10 points)
+
+**TW terminology (6 points):** 0 mainland terms (6), 1-2 (4 + WARNING), 3+ (2 + CRITICAL)
+**Chinese quality (4 points):** Traditional characters (2), formal register (2)
+
+#### Score Output Format
+
+Output the score report after the disclosure:
+
+```
+====================================
+QUALITY SCORE — [ID]
+====================================
+
+SCORE: XX / 100  [FILING-READY / GOOD DRAFT / NEEDS WORK / MAJOR ISSUES]
+
+DIMENSION BREAKDOWN:
+  Claims Quality:        XX / 30
+  Abstract:              XX / 15
+  Specification:         XX / 20
+  Language:              XX / 15
+  Prior Art:             XX / 10
+  Bilingual:             XX / 10
+
+ISSUES FOUND:
+  [C1] (CRITICAL) description → suggested fix
+  [W1] (WARNING) description → suggested fix
+  [I1] (INFO) description → suggestion
+
+RECOMMENDATION: [next step based on score]
+====================================
+```
+
+**Score interpretation:**
+- **90-100:** Filing-ready — send to attorney
+- **70-89:** Good draft — minor issues to address
+- **50-69:** Needs work — significant gaps remain
+- **0-49:** Major issues — re-run with additional context
+
+If score < 70 and CRITICAL issues exist, **automatically fix** them in the JSON before writing to disk. Then re-score. Only output the final version.
+
+### Step 11: Recommend Next Steps
+
+After scoring, recommend:
+
+1. **If score ≥ 80:** Run `/patent-submission [id]` to generate the presentation
+2. **If score < 80:** List the specific issues to address and suggest re-running with more context
+3. **Always:** Attorney review before filing — automated tools catch mechanical issues, not legal strategy
 
 ## Commands
 
-- `/patent-disclosure [id]` — Generate disclosure for specific innovation (JSON + PDF)
-- `/patent-disclosure [id] --no-pdf` — Generate JSON only, skip PDF
+- `/patent-disclosure [id]` — Generate disclosure for specific innovation (JSON + PDF + quality score)
+- `/patent-disclosure [id] --no-pdf` — Generate JSON + quality score only, skip PDF
 - `/patent-disclosure --all` — Generate disclosures for all innovations
-- `/patent-disclosure --validate [id]` — Validate existing disclosure
+- `/patent-disclosure --score-only [id]` — Score existing disclosure without regenerating
 
 ## Example Usage
 
