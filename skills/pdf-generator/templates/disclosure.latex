@@ -3,17 +3,17 @@
 % Geometry
 \usepackage[margin=1in]{geometry}
 
-% CJK Support
+% CJK Support — uses macOS system fonts with fallbacks
 \usepackage{xeCJK}
-\setCJKmainfont{Noto Sans CJK TC}
-\setCJKsansfont{Noto Sans CJK TC}
-\setCJKmonofont{Noto Sans Mono CJK TC}
+\setCJKmainfont[BoldFont=Heiti TC]{Songti TC}
+\setCJKsansfont{Heiti TC}
+\setCJKmonofont{Heiti TC}
 
-% Fonts
+% Fonts — uses macOS system fonts with fallbacks
 \usepackage{fontspec}
-\setmainfont{Noto Sans}
-\setsansfont{Noto Sans}
-\setmonofont{Noto Sans Mono}
+\setmainfont{Helvetica}
+\setsansfont{Helvetica}
+\setmonofont{Courier New}
 
 % Tables
 \usepackage{longtable}
