@@ -77,118 +77,222 @@ trap "rm -rf $TEMP_DIR" EXIT
 
 # Convert JSON to intermediate format
 if [[ "$DOC_TYPE" == "disclosure" ]]; then
-    # Generate Markdown from disclosure JSON
+    # Generate Markdown from disclosure JSON (matches patent disclosure reference format)
     python3 -c "
 import json
 with open('$INPUT_FILE') as f:
     data = json.load(f)
 md = []
 meta = data.get('metadata', {})
+title = meta.get('title', 'Patent Disclosure')
+app_num = meta.get('application_number', 'TBD')
+assignee = meta.get('assignee', 'ViewSonic Corporation')
+inventors = ', '.join(meta.get('inventors', ['TBD']))
+title_zh = meta.get('title_zh', data.get('title_zh', ''))
+
+# YAML frontmatter for LaTeX template
 md.append('---')
-md.append(f'title: \"{meta.get(\"title\", \"Patent Disclosure\")}\"')
-md.append(f'application_number: \"{meta.get(\"application_number\", \"TBD\")}\"')
-md.append(f'priority_date: \"{meta.get(\"priority_date\", \"TBD\")}\"')
+md.append(f'title: \"{title}\"')
+md.append(f'application_number: \"{app_num}\"')
+md.append(f'priority_date: \"{meta.get(\"priority_date\", \"To be established upon provisional filing\")}\"')
 md.append('inventors:')
 for inv in meta.get('inventors', ['TBD']):
     md.append(f'  - \"{inv}\"')
-md.append(f'assignee: \"{meta.get(\"assignee\", \"TBD\")}\"')
+md.append(f'assignee: \"{assignee}\"')
 md.append('---')
 md.append('')
+
+# Metadata block
 fields = meta.get('field_of_invention', [])
 if fields:
-    md.append('# Field of Invention')
+    md.append(f'**Field of Invention:** {\", \".join(fields)}')
     md.append('')
-    md.append(', '.join(fields))
-    md.append('')
+md.append(f'**Application Number:** {app_num}')
+md.append('')
+md.append(f'**Priority Date:** {meta.get(\"priority_date\", \"To be established upon provisional filing\")}')
+md.append('')
+md.append(f'**Inventor(s):** {inventors}')
+md.append('')
+md.append(f'**Assignee:** {assignee}')
+md.append('')
+
+# Section counter
+sec = 1
+
+# Abstract
 abstract = data.get('abstract', {})
 if abstract:
-    md.append('# Abstract')
+    md.append(f'# {sec}. Abstract')
     md.append('')
     if abstract.get('en'):
         md.append(abstract['en'])
         md.append('')
     if abstract.get('zh_tw'):
-        md.append('**摘要 (Traditional Chinese)**')
+        md.append(f'**\\u6458\\u8981 (Traditional Chinese)**')
         md.append('')
         md.append(abstract['zh_tw'])
         md.append('')
+    sec += 1
+
+# Problem Statement
 problem = data.get('problem_statement', {})
 if problem.get('background'):
-    md.append('# Problem Statement')
+    md.append(f'# {sec}. Problem Statement (Background of the Invention)')
     md.append('')
     for para in problem['background']:
         md.append(para)
         md.append('')
+    sec += 1
+
+# Summary
 summary = data.get('summary', {})
-if summary.get('overview'):
-    md.append('# Summary of Invention')
+if summary.get('overview') or summary.get('key_innovations'):
+    md.append(f'# {sec}. Summary of the Invention')
     md.append('')
-    for para in summary['overview']:
+    for para in summary.get('overview', []):
         md.append(para)
         md.append('')
+    innovations = summary.get('key_innovations', [])
+    if innovations:
+        md.append('**Key Innovations:**')
+        md.append('')
+        for inn in innovations:
+            md.append(f'- {inn}')
+        md.append('')
+    sec += 1
+
+# Detailed Description
 detail = data.get('detailed_description', {})
 if detail:
-    md.append('# Detailed Description')
+    detail_sec = sec
+    md.append(f'# {detail_sec}. Detailed Description of the Preferred Embodiment')
     md.append('')
+    subsec = 1
+
     if detail.get('system_architecture'):
-        md.append('## System Architecture')
+        md.append(f'## {detail_sec}.{subsec} System Architecture')
         md.append('')
         md.append(detail['system_architecture'])
         md.append('')
-    if detail.get('components'):
-        md.append('## Components')
+        subsec += 1
+
+    for comp in detail.get('components', []):
+        weight = f' (Weight: {comp[\"weight\"]})' if comp.get('weight') else ''
+        md.append(f'## {detail_sec}.{subsec} {comp[\"name\"]}{weight}')
         md.append('')
-        for comp in detail['components']:
-            weight = f' (Weight: {comp[\"weight\"]})' if comp.get('weight') else ''
-            md.append(f'### {comp[\"name\"]}{weight}')
+        md.append(comp.get('description', ''))
+        md.append('')
+
+        for sub in comp.get('sub_components', []):
+            md.append(f'- **{sub[\"name\"]}**: {sub.get(\"description\", \"\")}')
+        if comp.get('sub_components'):
             md.append('')
-            md.append(comp.get('description', ''))
-            md.append('')
-            for sub in comp.get('sub_components', []):
-                md.append(f'**{sub[\"name\"]}**: {sub.get(\"description\", \"\")}')
-                md.append('')
+        subsec += 1
+
     if detail.get('formulas'):
-        md.append('## Formulas')
+        md.append(f'## {detail_sec}.{subsec} Formulas and Algorithms')
         md.append('')
         for formula in detail['formulas']:
             md.append(f'**{formula[\"name\"]}**')
             md.append('')
             md.append(f'\`{formula[\"expression\"]}\`')
             md.append('')
+            if formula.get('variables'):
+                for var, desc in formula['variables'].items():
+                    md.append(f'- *{var}*: {desc}')
+                md.append('')
+        subsec += 1
+
+    # Bilingual support
+    if detail.get('bilingual_support'):
+        md.append(f'## {detail_sec}.{subsec} Bilingual Support')
+        md.append('')
+        bl = detail['bilingual_support']
+        if isinstance(bl, str):
+            md.append(bl)
+        elif isinstance(bl, dict):
+            for k, v in bl.items():
+                md.append(f'**{k}**: {v}')
+                md.append('')
+        md.append('')
+        subsec += 1
+
+    # Caching/performance
+    if detail.get('caching_performance'):
+        md.append(f'## {detail_sec}.{subsec} Caching and Performance')
+        md.append('')
+        cp = detail['caching_performance']
+        if isinstance(cp, str):
+            md.append(cp)
+        elif isinstance(cp, dict):
+            for k, v in cp.items():
+                md.append(f'**{k}**: {v}')
+                md.append('')
+        md.append('')
+        subsec += 1
+
+    sec += 1
+
+# Claims
 claims = data.get('claims', [])
 if claims:
-    md.append('# Claims')
+    md.append(f'# {sec}. Draft Patent Claims')
     md.append('')
-    for claim in claims:
-        prefix = '' if claim.get('claim_type') == 'independent' else f'(Depends on Claim {claim.get(\"depends_on\", 1)}) '
-        md.append(f'**Claim {claim[\"claim_number\"]}**: {prefix}{claim[\"text\"]}')
+    md.append('*Note: These are preliminary claims for discussion with patent counsel. Final claim language will be refined during formal prosecution.*')
+    md.append('')
+    ind_claims = [c for c in claims if c.get('claim_type') == 'independent']
+    dep_claims = [c for c in claims if c.get('claim_type') != 'independent']
+    if ind_claims:
+        md.append('## Independent Claims')
         md.append('')
+        for claim in ind_claims:
+            md.append(f'Claim {claim[\"claim_number\"]}. {claim[\"text\"]}')
+            md.append('')
+    if dep_claims:
+        md.append('## Dependent Claims')
+        md.append('')
+        for claim in dep_claims:
+            md.append(f'Claim {claim[\"claim_number\"]}. {claim[\"text\"]}')
+            md.append('')
+    sec += 1
+
+# Drawings
 drawings = data.get('drawings', [])
 if drawings:
-    md.append('# Description of Drawings')
+    md.append(f'# {sec}. Description of Drawings')
+    md.append('')
+    md.append('The following drawings should be prepared for the formal patent application:')
     md.append('')
     for drawing in drawings:
-        md.append(f'**Figure {drawing[\"figure_number\"]}**: {drawing[\"title\"]}')
-        md.append('')
-        md.append(drawing.get('description', ''))
-        md.append('')
+        md.append(f'- FIG. {drawing[\"figure_number\"]}: {drawing.get(\"title\", \"\")} \\u2014 {drawing.get(\"description\", \"\")}')
+    md.append('')
+    sec += 1
+
+# Prior Art
 prior = data.get('prior_art', {})
 if prior:
-    md.append('# Prior Art')
+    md.append(f'# {sec}. Prior Art Differentiation')
     md.append('')
-    for system in prior.get('reviewed_systems', []):
-        md.append(f'## {system[\"name\"]}')
+    systems = prior.get('reviewed_systems', [])
+    if systems:
+        for system in systems:
+            name = system.get('name', '')
+            stype = system.get('type', '')
+            desc = system.get('description', '')
+            limitation = system.get('limitation', '')
+            line = f'- **{name}**'
+            if stype:
+                line += f' ({stype})'
+            line += f': {desc}'
+            if limitation:
+                line += f' *Limitation: {limitation}*'
+            md.append(line)
         md.append('')
-        md.append(system.get('description', ''))
-        md.append('')
-        if system.get('limitation'):
-            md.append(f'**Limitation**: {system[\"limitation\"]}')
-            md.append('')
     if prior.get('differentiation'):
-        md.append('## Differentiation')
-        md.append('')
         md.append(prior['differentiation'])
         md.append('')
+    sec += 1
+
 print('\n'.join(md))
 " > "$TEMP_DIR/document.md"
 

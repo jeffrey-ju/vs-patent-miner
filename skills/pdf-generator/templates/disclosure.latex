@@ -29,20 +29,33 @@
 \definecolor{vsblue}{RGB}{0, 82, 147}
 \definecolor{vsgray}{RGB}{88, 89, 91}
 
-% Headers
+% Headers — CONFIDENTIAL on right, ID on left
 \usepackage{fancyhdr}
 \pagestyle{fancy}
 \fancyhf{}
-\fancyhead[L]{\small\textcolor{vsgray}{Patent Disclosure}}
-\fancyhead[R]{\small\textcolor{vsgray}{$application_number$}}
+\fancyhead[L]{\small\textcolor{vsgray}{$application_number$ Patent Disclosure}}
+\fancyhead[R]{\small\textbf{CONFIDENTIAL}}
 \fancyfoot[C]{\thepage}
 \renewcommand{\headrulewidth}{0.4pt}
 
-% Title formatting
+% Title formatting — no auto-numbering (we number manually in Markdown)
 \usepackage{titlesec}
-\titleformat{\section}{\Large\bfseries\color{vsblue}}{\thesection}{1em}{}
-\titleformat{\subsection}{\large\bfseries\color{vsblue}}{\thesubsection}{1em}{}
-\titleformat{\subsubsection}{\normalsize\bfseries}{\thesubsubsection}{1em}{}
+\titleformat{\section}{\Large\bfseries\color{vsblue}}{}{0em}{}
+\titleformat{\subsection}{\large\bfseries\color{vsblue}}{}{0em}{}
+\titleformat{\subsubsection}{\normalsize\bfseries}{}{0em}{}
+
+% Disable auto-numbering — we number manually in the Markdown
+\setcounter{secnumdepth}{-1}
+\setcounter{tocdepth}{2}
+
+% Prevent orphaned headings — keep heading with at least 3 lines after it
+\titlespacing*{\section}{0pt}{12pt plus 4pt minus 2pt}{6pt plus 2pt minus 2pt}
+\titlespacing*{\subsection}{0pt}{10pt plus 4pt minus 2pt}{4pt plus 2pt minus 2pt}
+\titlespacing*{\subsubsection}{0pt}{8pt plus 4pt minus 2pt}{4pt plus 2pt minus 2pt}
+
+\usepackage{needspace}
+\AddToHook{cmd/section/before}{\needspace{5\baselineskip}}
+\AddToHook{cmd/subsection/before}{\needspace{4\baselineskip}}
 
 % Hyperlinks
 \usepackage{hyperref}
@@ -64,34 +77,47 @@
 
 % Lists
 \usepackage{enumitem}
-\setlist[itemize]{leftmargin=*}
-\setlist[enumerate]{leftmargin=*}
+\setlist[itemize]{leftmargin=*, topsep=4pt, itemsep=2pt}
+\setlist[enumerate]{leftmargin=*, topsep=4pt, itemsep=2pt}
 
-% Custom commands
-\newcommand{\claimindent}{\hspace{2em}}
+% Paragraph spacing
+\setlength{\parskip}{6pt plus 2pt minus 1pt}
+\setlength{\parindent}{0pt}
+
+% Pandoc compatibility
+\providecommand{\tightlist}{\setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
 
 \begin{document}
 
 % Title Page
 \begin{titlepage}
 \centering
-\vspace*{2cm}
 
-{\Huge\bfseries\color{vsblue} $title$\par}
-\vspace{1cm}
-{\Large Patent Disclosure Document\par}
+\vspace*{1cm}
+{\small\textbf{CONFIDENTIAL --- ATTORNEY-CLIENT PRIVILEGE}\par}
+\vspace{0.5cm}
+\rule{\textwidth}{1pt}
+\vspace{1.5cm}
+
+{\Huge\bfseries\color{vsblue} Patent Disclosure Document\par}
+\vspace{0.8cm}
+{\Large $title$\par}
 \vspace{2cm}
 
 \begin{tabular}{ll}
-\textbf{Application Number:} & $application_number$ \\
-\textbf{Priority Date:} & $priority_date$ \\
-\textbf{Inventors:} & $for(inventors)$$inventors$$sep$, $endfor$ \\
+\textbf{Application Number:} & $application_number$ \\[4pt]
+\textbf{Priority Date:} & $priority_date$ \\[4pt]
+\textbf{Inventors:} & $for(inventors)$$inventors$$sep$, $endfor$ \\[4pt]
 \textbf{Assignee:} & $assignee$ \\
 \end{tabular}
 
+\vspace{2cm}
+{\large\today\par}
+
 \vfill
 
-{\large\today\par}
+{\small $assignee$\par}
+{\small Internal --- Restricted Distribution\par}
 
 \end{titlepage}
 
@@ -101,5 +127,11 @@
 
 % Main Content
 $body$
+
+\vfill
+\begin{center}
+\rule{0.5\textwidth}{0.4pt}\\[6pt]
+{\small\textit{This document is confidential and proprietary to $assignee$.}}
+\end{center}
 
 \end{document}
