@@ -508,42 +508,30 @@ Every disclosure MUST include a `drawings` array with at least 3 figures. Each d
 
 Without `mermaid_code`, the PDF will only show text descriptions instead of actual diagrams.
 
-### Step 10: Automatic PDF Generation
+### Step 10: Generate PDF
 
-Before generating the PDF, check and install required tools automatically:
+**YOU MUST USE THE PLUGIN'S SCRIPT. DO NOT call Pandoc directly. DO NOT write your own Markdown-to-PDF conversion. The script has the correct fonts, template, and diagram rendering built in.**
+
+Run this exact command (replace `[ID]` with the innovation ID and `[PLUGIN_DIR]` with the plugin installation path):
 
 ```bash
-# 1. Check PDF tools — install if missing
-if ! command -v pandoc &> /dev/null; then
-    brew install pandoc
-fi
-if ! command -v xelatex &> /dev/null; then
-    brew install --cask mactex-no-gui
-fi
+# Install missing tools first
+command -v pandoc &> /dev/null || brew install pandoc
+command -v xelatex &> /dev/null || brew install --cask mactex-no-gui
+command -v mmdc &> /dev/null || npm install -g @mermaid-js/mermaid-cli
 
-# 2. Check Mermaid CLI — install if missing (needed for diagram rendering)
-if ! command -v mmdc &> /dev/null; then
-    npm install -g @mermaid-js/mermaid-cli
-fi
-
-# 3. Generate PDF
-mkdir -p output/disclosures
-./skills/pdf-generator/scripts/generate-pdf.sh \
-  output/disclosures/[innovation-id]-disclosure.json \
-  output/disclosures/[innovation-id]-disclosure.pdf
+# Generate PDF using the plugin's script (NOT raw pandoc)
+[PLUGIN_DIR]/skills/pdf-generator/scripts/generate-pdf.sh \
+  output/disclosures/[ID]-disclosure.json \
+  output/disclosures/[ID]-disclosure.pdf
 ```
 
-**If any tool is missing, install it using the commands above before proceeding. Do not skip PDF generation — install the dependencies first.**
+The plugin directory is wherever `vs-patent-miner` is installed. Find it with:
+```bash
+find ~/.claude /Users -maxdepth 5 -name "generate-pdf.sh" -path "*/vs-patent-miner/*" 2>/dev/null | head -1
+```
 
-**Output files:**
-```
-output/disclosures/
-├── INV-001-disclosure.json    # Structured data
-├── INV-001-disclosure.pdf     # Formatted document
-└── diagrams/
-    ├── fig-1.png              # Rendered architecture diagram
-    └── fig-2.png              # Rendered flowchart
-```
+**NEVER run `pandoc` directly — the script handles fonts (macOS Songti TC/Heiti TC), the CONFIDENTIAL template, Mermaid diagram rendering, and proper section formatting.**
 
 ### Step 11: Self-Score Quality (0-100)
 

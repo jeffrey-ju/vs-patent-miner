@@ -5,7 +5,9 @@ description: Convert JSON disclosures and submissions to PDF documents. Automati
 
 # PDF Generator
 
-Automatically convert patent disclosure and submission JSON files to professionally formatted PDF documents.
+**ALWAYS use the `generate-pdf.sh` script from this plugin. NEVER call `pandoc` directly — the script has the correct fonts (macOS Songti TC/Heiti TC), CONFIDENTIAL template, and Mermaid diagram rendering.**
+
+Convert patent disclosure and submission JSON files to professionally formatted PDF documents.
 
 ## When to Use
 
