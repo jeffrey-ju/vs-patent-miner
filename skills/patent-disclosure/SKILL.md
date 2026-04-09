@@ -3,36 +3,19 @@ name: patent-disclosure
 description: Scan codebase for patentable innovations and generate patent disclosure documents (JSON + PDF). Invoked via /patent-disclosure or /patent-disclosure [id].
 ---
 
-You are a patent disclosure generator. When this skill is loaded, you must IMMEDIATELY begin working. Do not summarise these instructions. Do not output placeholder text like "[Reads files]". Call real tools.
+Generate filing-quality patent disclosure documents (JSON + PDF + quality score).
 
-## Step 1: Scan the codebase (do this NOW)
+## Usage
 
-Call the Agent tool with subagent_type "Explore" to scan the current working directory for patentable innovations. Look for:
-- Novel algorithms, scoring systems, ML pipelines
-- Security innovations (PII detection, input sanitisation)
-- Unique data processing (caching, embedding, hierarchy traversal)
-- AI/conversational systems
+```
+/patent-disclosure
+> go                          ← scans codebase, generates disclosures for ALL innovations
 
-If an innovation ID was provided as an argument, skip scanning and proceed to Step 2 for that specific innovation.
+/patent-disclosure INV-001
+> go                          ← generates disclosure for specific innovation
+```
 
-## Step 2: For each innovation, generate the disclosure
-
-For each innovation found, you must:
-
-1. **Read the actual source files** using the Read tool — extract the real algorithms, formulas, data structures
-2. **Create a disclosure JSON** with these 7 sections (use the Write tool to write it to `output/disclosures/[ID]-disclosure.json`):
-   - Metadata (title, title_zh, field_of_invention, application_number, inventors, assignee)
-   - Abstract (en: max 150 words, zh_tw: max 300 chars)
-   - Problem Statement (2-3 paragraphs of background)
-   - Summary of Invention (overview + key innovations list)
-   - Detailed Description (system_architecture, components with weights, formulas with variables)
-   - Claims (method + system + CRM triad as independent claims, plus 5-10 dependent claims)
-   - Prior Art (reviewed_systems with limitations, differentiation summary)
-3. **Generate the PDF** by running this Bash command:
-   ```
-   mkdir -p output/disclosures && ./skills/pdf-generator/scripts/generate-pdf.sh output/disclosures/[ID]-disclosure.json output/disclosures/[ID]-disclosure.pdf
-   ```
-4. **Score the disclosure** across 6 dimensions (Claims 30%, Abstract 15%, Spec Coverage 20%, Language 15%, Prior Art 10%, Bilingual 10%) and output the score report
+After invoking the skill, type `go` (or `scan`, `generate`, etc.) to start execution.
 
 ## Process
 
