@@ -1,27 +1,38 @@
 ---
 name: patent-disclosure
-description: Generate filing-quality patent disclosure documents with built-in quality scoring. Produces JSON + PDF + quality score (0-100). Use after identifying innovations with /patent-mining, or when the user wants to create a patent disclosure for a specific innovation.
+description: Scan codebase for patentable innovations and generate patent disclosure documents (JSON + PDF). Invoked via /patent-disclosure or /patent-disclosure [id].
 ---
 
-# Patent Disclosure Generator
+You are a patent disclosure generator. When this skill is loaded, you must IMMEDIATELY begin working. Do not summarise these instructions. Do not output placeholder text like "[Reads files]". Call real tools.
 
-<CRITICAL-INSTRUCTION>
-YOU MUST USE TOOLS TO DO REAL WORK. DO NOT SIMULATE OR SUMMARISE.
+## Step 1: Scan the codebase (do this NOW)
 
-When this skill is invoked you MUST immediately start calling tools:
-- Use the **Read** tool to read actual source files
-- Use the **Grep** and **Glob** tools to search the codebase
-- Use the **Write** tool to create the disclosure JSON file
-- Use the **Bash** tool to run `python3 skills/patent-disclosure/scripts/generate-disclosure.py` and `./skills/pdf-generator/scripts/generate-pdf.sh`
+Call the Agent tool with subagent_type "Explore" to scan the current working directory for patentable innovations. Look for:
+- Novel algorithms, scoring systems, ML pipelines
+- Security innovations (PII detection, input sanitisation)
+- Unique data processing (caching, embedding, hierarchy traversal)
+- AI/conversational systems
 
-If you output text like "[Reads source files]" or "[Generates disclosure]" WITHOUT actually calling the Read/Write/Bash tools, you have FAILED. Every action must be a real tool call that produces real files on disk.
+If an innovation ID was provided as an argument, skip scanning and proceed to Step 2 for that specific innovation.
 
-**Workflow:**
-1. No ID provided → Use Glob/Grep/Read to scan the codebase for patentable innovations, THEN generate a disclosure for each
-2. ID provided → Load that innovation's details and generate its disclosure
+## Step 2: For each innovation, generate the disclosure
 
-START BY CALLING A TOOL. Your first action must be a Glob or Read tool call, not text output.
-</CRITICAL-INSTRUCTION>
+For each innovation found, you must:
+
+1. **Read the actual source files** using the Read tool — extract the real algorithms, formulas, data structures
+2. **Create a disclosure JSON** with these 7 sections (use the Write tool to write it to `output/disclosures/[ID]-disclosure.json`):
+   - Metadata (title, title_zh, field_of_invention, application_number, inventors, assignee)
+   - Abstract (en: max 150 words, zh_tw: max 300 chars)
+   - Problem Statement (2-3 paragraphs of background)
+   - Summary of Invention (overview + key innovations list)
+   - Detailed Description (system_architecture, components with weights, formulas with variables)
+   - Claims (method + system + CRM triad as independent claims, plus 5-10 dependent claims)
+   - Prior Art (reviewed_systems with limitations, differentiation summary)
+3. **Generate the PDF** by running this Bash command:
+   ```
+   mkdir -p output/disclosures && ./skills/pdf-generator/scripts/generate-pdf.sh output/disclosures/[ID]-disclosure.json output/disclosures/[ID]-disclosure.pdf
+   ```
+4. **Score the disclosure** across 6 dimensions (Claims 30%, Abstract 15%, Spec Coverage 20%, Language 15%, Prior Art 10%, Bilingual 10%) and output the score report
 
 ## Process
 
