@@ -20,9 +20,10 @@
 \usepackage{booktabs}
 \usepackage{array}
 
-% Graphics
+% Graphics — force figures to render inline, not float to end
 \usepackage{graphicx}
 \usepackage{float}
+\floatplacement{figure}{H}
 
 % Colors
 \usepackage{xcolor}
