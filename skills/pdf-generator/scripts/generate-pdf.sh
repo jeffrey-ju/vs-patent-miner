@@ -102,19 +102,7 @@ md.append(f'assignee: \"{assignee}\"')
 md.append('---')
 md.append('')
 
-# Metadata block
-fields = meta.get('field_of_invention', [])
-if fields:
-    md.append(f'**Field of Invention:** {\", \".join(fields)}')
-    md.append('')
-md.append(f'**Application Number:** {app_num}')
-md.append('')
-md.append(f'**Priority Date:** {meta.get(\"priority_date\", \"To be established upon provisional filing\")}')
-md.append('')
-md.append(f'**Inventor(s):** {inventors}')
-md.append('')
-md.append(f'**Assignee:** {assignee}')
-md.append('')
+# No metadata block in body — title page covers it
 
 # Section counter
 sec = 1
@@ -128,7 +116,7 @@ if abstract:
         md.append(abstract['en'])
         md.append('')
     if abstract.get('zh_tw'):
-        md.append(f'**\\u6458\\u8981 (Traditional Chinese)**')
+        md.append('**摘要 (Traditional Chinese)**')
         md.append('')
         md.append(abstract['zh_tw'])
         md.append('')
@@ -201,7 +189,7 @@ if detail:
                 for var, desc in formula['variables'].items():
                     md.append(f'- *{var}*: {desc}')
                 md.append('')
-        subsec += 1
+    subsec += 1
 
     # Bilingual support
     if detail.get('bilingual_support'):
@@ -277,9 +265,6 @@ if drawings:
         desc = drawing.get('description', '')
         mermaid = drawing.get('mermaid_code', '')
 
-        md.append(f'### FIG. {fig_num}: {title}')
-        md.append('')
-
         if mermaid and has_mmdc:
             # Render mermaid diagram to PNG
             out_dir = os.path.dirname('$INPUT_FILE') or '.'
@@ -293,24 +278,27 @@ if drawings:
 
             try:
                 subprocess.run(
-                    ['mmdc', '-i', mmd_path, '-o', diag_path, '-b', 'transparent', '-w', '800'],
+                    ['mmdc', '-i', mmd_path, '-o', diag_path, '-b', 'transparent', '-w', '600'],
                     capture_output=True, check=True
                 )
+                md.append(f'**FIG. {fig_num}: {title}**')
+                md.append('')
+                md.append(f'*{desc}*')
+                md.append('')
                 md.append(f'![FIG. {fig_num}: {title}]({diag_path})')
                 md.append('')
             except subprocess.CalledProcessError:
-                md.append(f'*{desc}*')
+                md.append(f'**FIG. {fig_num}: {title}** -- *{desc}*')
                 md.append('')
             finally:
                 os.unlink(mmd_path)
         elif mermaid:
-            # Mermaid code present but mmdc not available — show description
-            md.append(f'*{desc}*')
+            md.append(f'**FIG. {fig_num}: {title}** -- *{desc}*')
             md.append('')
-            md.append(f'*(Mermaid diagram available — install mermaid-cli to render: npm install -g @mermaid-js/mermaid-cli)*')
+            md.append('*(Install mermaid-cli to render: npm install -g @mermaid-js/mermaid-cli)*')
             md.append('')
         else:
-            md.append(f'*{desc}*')
+            md.append(f'**FIG. {fig_num}: {title}** -- *{desc}*')
             md.append('')
     sec += 1
 

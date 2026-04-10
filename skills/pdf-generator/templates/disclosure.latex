@@ -15,12 +15,19 @@
 \setsansfont{Helvetica}
 \setmonofont{Courier New}
 
+% Unicode character fallbacks — Helvetica lacks some symbols
+\usepackage{newunicodechar}
+\newunicodechar{→}{\ensuremath{\to}}
+\newunicodechar{←}{\ensuremath{\leftarrow}}
+\newunicodechar{≥}{\ensuremath{\geq}}
+\newunicodechar{≤}{\ensuremath{\leq}}
+
 % Tables
 \usepackage{longtable}
 \usepackage{booktabs}
 \usepackage{array}
 
-% Graphics — force figures to render inline, not float to end
+% Graphics — force figures inline, constrain to page width
 \usepackage{graphicx}
 \usepackage{float}
 \floatplacement{figure}{H}
@@ -49,14 +56,14 @@
 \setcounter{secnumdepth}{-1}
 \setcounter{tocdepth}{2}
 
-% Prevent orphaned headings — keep heading with at least 3 lines after it
+% Prevent orphaned headings — reserve space before headings
 \titlespacing*{\section}{0pt}{12pt plus 4pt minus 2pt}{6pt plus 2pt minus 2pt}
 \titlespacing*{\subsection}{0pt}{10pt plus 4pt minus 2pt}{4pt plus 2pt minus 2pt}
 \titlespacing*{\subsubsection}{0pt}{8pt plus 4pt minus 2pt}{4pt plus 2pt minus 2pt}
 
 \usepackage{needspace}
-\AddToHook{cmd/section/before}{\needspace{5\baselineskip}}
-\AddToHook{cmd/subsection/before}{\needspace{4\baselineskip}}
+\AddToHook{cmd/section/before}{\needspace{8\baselineskip}}
+\AddToHook{cmd/subsection/before}{\needspace{6\baselineskip}}
 
 % Hyperlinks
 \usepackage{hyperref}
@@ -88,11 +95,9 @@
 % Pandoc compatibility
 \providecommand{\tightlist}{\setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
 \providecommand{\pandocbounded}[1]{#1}
-\makeatletter
-\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
-\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
-\makeatother
-\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+
+% Force ALL images to fit within page width — prevents blank pages
+\setkeys{Gin}{width=\linewidth,height=0.85\textheight,keepaspectratio}
 
 \begin{document}
 
