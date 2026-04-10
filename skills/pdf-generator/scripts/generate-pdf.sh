@@ -181,13 +181,19 @@ if detail:
         md.append(f'## {detail_sec}.{subsec} Formulas and Algorithms')
         md.append('')
         for formula in detail['formulas']:
-            md.append(f'**{formula[\"name\"]}**')
+            md.append(f'**{formula.get(\"name\", \"Formula\")}**')
             md.append('')
-            md.append(f'\`{formula[\"expression\"]}\`')
-            md.append('')
+            expr = formula.get('expression', formula.get('formula', ''))
+            if expr:
+                md.append(f'\`{expr}\`')
+                md.append('')
+            desc = formula.get('description', '')
+            if desc and not formula.get('variables'):
+                md.append(f'{desc}')
+                md.append('')
             if formula.get('variables'):
-                for var, desc in formula['variables'].items():
-                    md.append(f'- *{var}*: {desc}')
+                for var, vdesc in formula['variables'].items():
+                    md.append(f'- *{var}*: {vdesc}')
                 md.append('')
     subsec += 1
 
@@ -228,19 +234,21 @@ if claims:
     md.append('')
     md.append('*Note: These are preliminary claims for discussion with patent counsel. Final claim language will be refined during formal prosecution.*')
     md.append('')
-    ind_claims = [c for c in claims if c.get('claim_type') == 'independent']
-    dep_claims = [c for c in claims if c.get('claim_type') != 'independent']
+    ind_claims = [c for c in claims if c.get('claim_type', c.get('type', c.get('category', ''))) == 'independent']
+    dep_claims = [c for c in claims if c.get('claim_type', c.get('type', c.get('category', ''))) != 'independent']
     if ind_claims:
         md.append('## Independent Claims')
         md.append('')
         for claim in ind_claims:
-            md.append(f'**Claim {claim[\"claim_number\"]}.** {claim[\"text\"]}')
+            num = claim.get('claim_number', claim.get('number', ''))
+            md.append(f'**Claim {num}.** {claim.get(\"text\", \"\")}')
             md.append('')
     if dep_claims:
         md.append('## Dependent Claims')
         md.append('')
         for claim in dep_claims:
-            md.append(f'**Claim {claim[\"claim_number\"]}.** {claim[\"text\"]}')
+            num = claim.get('claim_number', claim.get('number', ''))
+            md.append(f'**Claim {num}.** {claim.get(\"text\", \"\")}')
             md.append('')
     sec += 1
 
@@ -386,6 +394,7 @@ if [[ "$PDF_TOOL" == "pandoc" ]]; then
     if [[ "$DOC_TYPE" == "disclosure" ]]; then
         pandoc "$TEMP_DIR/document.md" \
             -o "$OUTPUT_FILE" \
+            --from=markdown-raw_tex \
             --pdf-engine=xelatex \
             --template="$TEMPLATE_DIR/disclosure.latex" \
             -V geometry:margin=1in \
