@@ -214,25 +214,29 @@
       "figure_number": 3,
       "title": "Scope Hierarchy",
       "description": "Scope hierarchy diagram showing team/department/company weighting with example scores",
-      "type": "hierarchy"
+      "type": "hierarchy",
+      "mermaid_code": "graph TD\n    subgraph Company[Company Scope - 0.8x]\n        A[Company Strategy Docs]\n    end\n    subgraph Department[Department Scope - 1.0x]\n        B[Dept Strategy Docs]\n    end\n    subgraph Team[Team Scope - 1.2x]\n        C[Team Strategy Docs]\n    end\n    D[User OKR] --> C\n    D --> B\n    D --> A\n    C -->|Weight 1.2| E[Weighted Score]\n    B -->|Weight 1.0| E\n    A -->|Weight 0.8| E"
     },
     {
       "figure_number": 4,
       "title": "Management Chain Traversal",
       "description": "Management chain traversal decision tree (direct parent → supervisor → skip-level → default)",
-      "type": "decision_tree"
+      "type": "decision_tree",
+      "mermaid_code": "flowchart TD\n    A[Start: Find Parent OKR] --> B{Has Designated\\nParent OKR?}\n    B -->|Yes| C[Use Parent OKR]\n    B -->|No| D{Supervisor Has\\nApproved OKRs?}\n    D -->|Yes| E[Use Best Match\\nfrom Supervisor]\n    D -->|No| F{Level < 3?}\n    F -->|Yes| G[Move to\\nSkip-Level Manager]\n    G --> H{Circular\\nReference?}\n    H -->|No| D\n    H -->|Yes| I[Stop Traversal]\n    F -->|No| I\n    C --> J[Compute Vertical Score]\n    E --> J\n    I --> K[Score = 0]"
     },
     {
       "figure_number": 5,
       "title": "Quality Dimension Scoring",
       "description": "Quality dimension scoring flowchart with measurability bonus and structure bonus paths",
-      "type": "flowchart"
+      "type": "flowchart",
+      "mermaid_code": "flowchart TD\n    A[OKR Input] --> B[Base Quality Score\\nfrom Methodology Docs]\n    A --> C{Key Results\\nMeasurable?}\n    C -->|>50% have metrics| D[+10 Measurability Bonus]\n    C -->|No| E[No Bonus]\n    A --> F{Has >= 2\\nKey Results?}\n    F -->|Yes| G[+5 Structure Bonus]\n    F -->|No| H[No Bonus]\n    B --> I[Sum Components]\n    D --> I\n    E --> I\n    G --> I\n    H --> I\n    I --> J[Quality Score\\n0-100]"
     },
     {
       "figure_number": 6,
       "title": "Weight Normalisation",
       "description": "Weight normalisation logic when dimensions are unavailable",
-      "type": "flowchart"
+      "type": "flowchart",
+      "mermaid_code": "flowchart TD\n    A[Check Available Dimensions] --> B{Strategic\\nAvailable?}\n    B -->|Yes| C[W_s = 0.40]\n    B -->|No| D[W_s = 0]\n    A --> E{Vertical\\nAvailable?}\n    E -->|Yes| F[W_v = 0.40]\n    E -->|No| G[W_v = 0]\n    A --> H{Quality\\nAvailable?}\n    H -->|Yes| I[W_q = 0.20]\n    H -->|No| J[W_q = 0]\n    C --> K[Sum Available Weights]\n    D --> K\n    F --> K\n    G --> K\n    I --> K\n    J --> K\n    K --> L[Normalise: W_eff = W / Sum]\n    L --> M[Composite = Σ Score × W_eff]"
     }
   ],
   "prior_art": {

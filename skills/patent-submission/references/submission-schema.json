@@ -36,6 +36,15 @@
         "generated_date": {
           "type": "string",
           "format": "date"
+        },
+        "inventors": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Names of inventors or team"
+        },
+        "assignee": {
+          "type": "string",
+          "description": "Company or organization owning the patent"
         }
       }
     },
@@ -52,7 +61,7 @@
           },
           "type": {
             "type": "string",
-            "enum": ["title", "problem", "solution", "architecture", "features", "claims", "closing"]
+            "enum": ["title", "problem", "solution", "architecture", "algorithm", "features", "advantages", "claims", "appendix", "closing"]
           },
           "title": {
             "type": "string",

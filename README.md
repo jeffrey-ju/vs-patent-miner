@@ -148,28 +148,35 @@ cd /path/to/your/project
 
 ## Output Structure
 
+All output files are saved to the **project you are scanning**, not the plugin installation directory:
+
 ```
-output/
-├── disclosures/
-│   ├── INV-001-disclosure.json    # Structured disclosure data
-│   └── INV-001-disclosure.pdf     # Formatted PDF document
-└── submissions/
-    ├── INV-001-submission.json    # Structured slide data
-    └── INV-001-submission.pptx    # PowerPoint presentation
+[YOUR_PROJECT]/
+└── output/
+    ├── scans/
+    │   └── [PROJECT]-scan.json        # Scan results from /patent-mining
+    ├── disclosures/
+    │   ├── INV-001-disclosure.json    # Structured disclosure data
+    │   └── INV-001-disclosure.pdf     # Formatted PDF document
+    └── submissions/
+        ├── INV-001-submission.json    # Structured slide data
+        └── INV-001-submission.pptx    # PowerPoint presentation
 ```
 
 ---
 
 ## Disclosure Document Structure
 
-The disclosure JSON contains exactly 6 sections:
+The disclosure JSON contains 8 required sections:
 
-1. **Metadata** — Title, application number, inventors, assignee, field of invention
-2. **Problem Statement** — Background and limitations of existing approaches
-3. **Summary of Invention** — High-level solution overview
-4. **Detailed Description** — Components, architecture, formulas, algorithms
-5. **Claims** — Independent and dependent patent claims
-6. **Prior Art** — Reviewed systems and differentiation
+1. **Metadata** — Title, title_zh, application number, inventors, assignee, field of invention
+2. **Abstract** — English (max 150 words) and Traditional Chinese (max 300 chars) abstracts
+3. **Problem Statement** — Background and limitations of existing approaches
+4. **Summary of Invention** — High-level solution overview and key innovations
+5. **Detailed Description** — Components, architecture, formulas, algorithms
+6. **Claims** — Independent (method/system/CRM triad) and dependent patent claims
+7. **Drawings** — Architecture diagrams with Mermaid code (required for PDF rendering)
+8. **Prior Art** — Reviewed systems and differentiation
 
 ---
 
@@ -307,10 +314,11 @@ npx ctx7 setup --claude
 ```
 vs-patent-miner/
 ├── .claude-plugin/
-│   └── plugin.json              # Plugin metadata
+│   ├── plugin.json              # Plugin metadata
+│   └── marketplace.json         # Marketplace listing
 ├── hooks/
 │   ├── hooks.json               # SessionStart hook registration
-│   └── check-dependencies.sh    # Dependency checker
+│   └── check-dependencies.sh    # Dependency checker (uses CLAUDE_PLUGIN_ROOT env var)
 ├── skills/
 │   ├── patent-mining/           # Innovation discovery
 │   ├── patent-disclosure/       # Disclosure generation

@@ -54,7 +54,8 @@ The `/patent-mining` command performs a comprehensive scan:
    - Scores novelty based on uniqueness
    - Tags source files
 
-**Example Output:**
+**Output File:** `output/scans/[PROJECT]-scan.json`
+
 ```json
 {
   "scan_metadata": {
@@ -74,6 +75,8 @@ The `/patent-mining` command performs a comprehensive scan:
   ]
 }
 ```
+
+**Important:** The scan results are automatically saved to disk. This file is required for subsequent `/patent-disclosure` commands.
 
 ### Generating Disclosures
 
@@ -196,16 +199,21 @@ When you run `/patent-disclosure`:
 
 ### Output Structure
 
+All output files are saved to the **project you are scanning**, not the plugin directory:
+
 ```
-output/
-├── disclosures/
-│   ├── INV-001-disclosure.json    # Structured data
-│   └── INV-001-disclosure.pdf     # Formatted document
-└── submissions/
-    ├── INV-001-submission.json    # Structured data
-    ├── INV-001-submission.pptx    # PowerPoint presentation
-    └── diagrams/
-        └── INV-001-diagram-1.png  # Rendered Mermaid diagrams
+[YOUR_PROJECT]/
+└── output/
+    ├── scans/
+    │   └── [PROJECT]-scan.json        # Scan results
+    ├── disclosures/
+    │   ├── INV-001-disclosure.json    # Structured data
+    │   └── INV-001-disclosure.pdf     # Formatted document
+    └── submissions/
+        ├── INV-001-submission.json    # Structured data
+        ├── INV-001-submission.pptx    # PowerPoint presentation
+        └── diagrams/
+            └── INV-001-diagram-1.png  # Rendered Mermaid diagrams
 ```
 
 ### PDF Tool Requirements

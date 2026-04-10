@@ -387,13 +387,19 @@ Replace the example content with actual diagrams based on the innovation's archi
 
 **CRITICAL: You MUST execute the generation script to write files to disk.**
 
+**Output location:** All output files are saved to the **current project directory** (where you invoked the command), NOT the plugin installation directory.
+
 After gathering all information (Steps 1-8), you MUST:
 
 1. Create the disclosure JSON object with all 8 sections (including `drawings` with `mermaid_code`)
-2. Pipe the JSON to the generation script:
+2. Find the plugin script and pipe the JSON to it (output to current project):
 
 ```bash
-cat << 'EOF' | python3 skills/patent-disclosure/scripts/generate-disclosure.py [INNOVATION-ID] output/disclosures/[INNOVATION-ID]-disclosure.json
+# Find the plugin's script location
+PLUGIN_DIR=$(find ~/.claude -name "generate-disclosure.py" -path "*/vs-patent-miner/*" 2>/dev/null | head -1 | xargs dirname | xargs dirname)
+
+# Save to CURRENT PROJECT directory
+cat << 'EOF' | python3 "$PLUGIN_DIR/scripts/generate-disclosure.py" [INNOVATION-ID] ./output/disclosures/[INNOVATION-ID]-disclosure.json
 {
   "id": "[INNOVATION-ID]",
   "title": "...",
@@ -454,12 +460,14 @@ cat << 'EOF' | python3 skills/patent-disclosure/scripts/generate-disclosure.py [
 EOF
 ```
 
-3. Verify the file was created:
+3. Verify the file was created in the **current project**:
 ```bash
-ls -la output/disclosures/
+ls -la ./output/disclosures/
 ```
 
 **DO NOT skip the script execution. The script ensures files are written to disk.**
+
+**IMPORTANT:** Output paths like `./output/disclosures/` are relative to the current working directory (your project), not the plugin directory.
 
 ## Document Structure (8 Sections)
 
@@ -512,7 +520,7 @@ Without `mermaid_code`, the PDF will only show text descriptions instead of actu
 
 **YOU MUST USE THE PLUGIN'S SCRIPT. DO NOT call Pandoc directly. DO NOT write your own Markdown-to-PDF conversion. The script has the correct fonts, template, and diagram rendering built in.**
 
-Run this exact command (replace `[ID]` with the innovation ID and `[PLUGIN_DIR]` with the plugin installation path):
+Run this exact command (replace `[ID]` with the innovation ID):
 
 ```bash
 # Install missing tools first
@@ -520,15 +528,13 @@ command -v pandoc &> /dev/null || brew install pandoc
 command -v xelatex &> /dev/null || brew install --cask mactex-no-gui
 command -v mmdc &> /dev/null || npm install -g @mermaid-js/mermaid-cli
 
-# Generate PDF using the plugin's script (NOT raw pandoc)
-[PLUGIN_DIR]/skills/pdf-generator/scripts/generate-pdf.sh \
-  output/disclosures/[ID]-disclosure.json \
-  output/disclosures/[ID]-disclosure.pdf
-```
+# Find the plugin's script location
+PLUGIN_PDF_SCRIPT=$(find ~/.claude -name "generate-pdf.sh" -path "*/vs-patent-miner/*" 2>/dev/null | head -1)
 
-The plugin directory is wherever `vs-patent-miner` is installed. Find it with:
-```bash
-find ~/.claude /Users -maxdepth 5 -name "generate-pdf.sh" -path "*/vs-patent-miner/*" 2>/dev/null | head -1
+# Generate PDF (input/output paths are relative to CURRENT PROJECT)
+"$PLUGIN_PDF_SCRIPT" \
+  ./output/disclosures/[ID]-disclosure.json \
+  ./output/disclosures/[ID]-disclosure.pdf
 ```
 
 **NEVER run `pandoc` directly — the script handles fonts (macOS Songti TC/Heiti TC), the CONFIDENTIAL template, Mermaid diagram rendering, and proper section formatting.**

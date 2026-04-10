@@ -163,15 +163,18 @@ output/
 
 ## Templates
 
+Templates are located in `skills/pdf-generator/templates/`:
+
 ### Disclosure Template Structure
 
 ```
-templates/
-├── disclosure.latex          # LaTeX template for Pandoc
+skills/pdf-generator/templates/
+├── disclosure.latex          # LaTeX template for Pandoc (CJK fonts: Songti TC/Heiti TC)
 ├── disclosure.css            # CSS for WeasyPrint
-├── disclosure.html           # HTML template
-└── submission-slides.html    # Slide deck template
+└── submission-slides.css     # CSS for WeasyPrint slides
 ```
+
+**Note:** The `disclosure.latex` template uses macOS system fonts (Songti TC, Heiti TC, Helvetica) and includes CONFIDENTIAL headers.
 
 ### Template Variables
 
