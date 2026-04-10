@@ -71,9 +71,21 @@ For each innovation candidate, assess:
 
 ### Phase 4: DOCUMENT — Innovation Registry
 
-Output a structured list of innovations:
+**CRITICAL: You MUST execute the save script to write results to disk.**
 
-```json
+**Output location:** All output files are saved to the **scanned project's directory** (current working directory), NOT the plugin installation directory.
+
+After completing the scan (Phases 1-3), you MUST:
+
+1. Create the scan results JSON object
+2. Pipe the JSON to the save script (use absolute path to script, relative path for output):
+
+```bash
+# Find the plugin's script location
+PLUGIN_SCRIPT=$(find ~/.claude -name "save-scan-results.py" -path "*/vs-patent-miner/*" 2>/dev/null | head -1)
+
+# Save to CURRENT PROJECT directory (where you are scanning)
+cat << 'EOF' | python3 "$PLUGIN_SCRIPT" ./output/scans/[PROJECT]-scan.json
 {
   "scan_metadata": {
     "project_name": "string",
@@ -96,7 +108,17 @@ Output a structured list of innovations:
     }
   ]
 }
+EOF
 ```
+
+3. Verify the file was created in the **current project**:
+```bash
+ls -la ./output/scans/
+```
+
+**DO NOT skip the script execution. The script ensures files are written to disk and validates the JSON structure.**
+
+**IMPORTANT:** Output paths like `./output/scans/` are relative to the current working directory (the project being scanned), not the plugin directory.
 
 ## Commands
 
@@ -158,10 +180,23 @@ Use context7:resolve-library-id to test if MCP is configured
 
 ## Output
 
-After scanning, produce:
-1. **Innovation Summary** — Quick overview of all candidates
-2. **Detailed Registry** — JSON with full details
+After scanning, you MUST produce:
+
+1. **Saved JSON File** — `./output/scans/[PROJECT]-scan.json` in the **scanned project directory**
+2. **Innovation Summary** — Quick overview of all candidates (displayed to user)
 3. **Recommendations** — Which to pursue for patent disclosure
+
+**Output file structure (in the scanned project):**
+```
+[PROJECT_BEING_SCANNED]/
+└── output/
+    └── scans/
+        └── [PROJECT]-scan.json    # Scan results with all innovations
+```
+
+The saved JSON file is required for subsequent `/patent-disclosure` commands to reference innovation IDs.
+
+**Note:** All output goes to the project you are scanning, not the plugin installation directory.
 
 ## Next Steps
 

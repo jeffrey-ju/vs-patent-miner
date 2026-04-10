@@ -27,13 +27,15 @@ Based on the ViewSonic patent submission template, generates a 7-slide presentat
 
 | Slide | Type | Content |
 |-------|------|---------|
-| 1 | Title | 中英文標題、專利編號 |
-| 2 | Problem | 本發明要解決的問題 (Background) |
-| 3 | Solution | 本發明提出的解決方案 (Invention) |
-| 4 | Algorithm | 演算法流程圖 / 技術細節 |
-| 5 | Advantages | 本發明的技術優勢 |
-| 6 | Appendix | 附錄：示意圖、Claims 摘要 |
-| 7 | Closing | Thank you |
+| 1 | title | 中英文標題、專利編號 |
+| 2 | problem | 本發明要解決的問題 (Background) |
+| 3 | solution | 本發明提出的解決方案 (Invention) |
+| 4 | algorithm | 演算法流程圖 / 技術細節 |
+| 5 | advantages | 本發明的技術優勢 |
+| 6 | appendix | Appendix: Claims 摘要 |
+| 7 | closing | Thank you |
+
+**Supported slide types:** `title`, `problem`, `solution`, `architecture` (alias for algorithm), `algorithm`, `features` (alias for advantages), `advantages`, `claims` (alias for appendix), `appendix`, `closing`
 
 ## Process
 

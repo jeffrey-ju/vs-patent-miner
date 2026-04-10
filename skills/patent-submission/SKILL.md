@@ -157,34 +157,43 @@ For each slide, add speaker notes:
 
 **CRITICAL: You MUST execute the generation script to write files to disk.**
 
+**Output location:** All output files are saved to the **current project directory** (where you invoked the command), NOT the plugin installation directory.
+
 After gathering all slide content (Steps 1-9), you MUST run the generation script.
+
+```bash
+# Find the plugin's script location
+PLUGIN_DIR=$(find ~/.claude -name "generate-submission.py" -path "*/vs-patent-miner/*" 2>/dev/null | head -1 | xargs dirname | xargs dirname)
+```
 
 **Option A: From existing disclosure JSON:**
 ```bash
-python3 skills/patent-submission/scripts/generate-submission.py \
+python3 "$PLUGIN_DIR/scripts/generate-submission.py" \
   [INNOVATION-ID] \
-  output/submissions/[INNOVATION-ID]-submission.json \
-  --from-disclosure output/disclosures/[INNOVATION-ID]-disclosure.json
+  ./output/submissions/[INNOVATION-ID]-submission.json \
+  --from-disclosure ./output/disclosures/[INNOVATION-ID]-disclosure.json
 ```
 
 **Option B: From disclosure data via stdin:**
 ```bash
-cat output/disclosures/[INNOVATION-ID]-disclosure.json | \
-  python3 skills/patent-submission/scripts/generate-submission.py \
+cat ./output/disclosures/[INNOVATION-ID]-disclosure.json | \
+  python3 "$PLUGIN_DIR/scripts/generate-submission.py" \
   [INNOVATION-ID] \
-  output/submissions/[INNOVATION-ID]-submission.json
+  ./output/submissions/[INNOVATION-ID]-submission.json
 ```
 
 The script will:
 1. Generate submission JSON
 2. Automatically generate PPTX (if python-pptx is installed)
 
-Verify the files were created:
+Verify the files were created in the **current project**:
 ```bash
-ls -la output/submissions/
+ls -la ./output/submissions/
 ```
 
 **DO NOT skip the script execution. The script ensures files are written to disk.**
+
+**IMPORTANT:** Output paths like `./output/submissions/` are relative to the current working directory (your project), not the plugin directory.
 
 ### Step 11: Render Mermaid Diagrams
 
@@ -204,20 +213,24 @@ After saving JSON, automatically generate PowerPoint presentation:
 # Check if python-pptx is available
 python3 -c "import pptx" 2>/dev/null
 
-# Generate PPTX
-python3 skills/pptx-generator/scripts/generate-pptx.py \
-  output/submissions/[innovation-id]-submission.json \
-  output/submissions/[innovation-id]-submission.pptx
+# Find the plugin's pptx generator script
+PPTX_SCRIPT=$(find ~/.claude -name "generate-pptx.py" -path "*/vs-patent-miner/*" 2>/dev/null | head -1)
+
+# Generate PPTX (paths relative to current project)
+python3 "$PPTX_SCRIPT" \
+  ./output/submissions/[innovation-id]-submission.json \
+  ./output/submissions/[innovation-id]-submission.pptx
 ```
 
-**Output files:**
+**Output files (in your project directory):**
 ```
-output/submissions/
-├── INV-001-submission.json           # Structured data
-├── INV-001-submission.pptx           # PowerPoint presentation
-└── diagrams/
-    ├── INV-001-diagram-1.png         # Rendered Mermaid diagrams
-    └── INV-001-diagram-2.png
+[YOUR_PROJECT]/
+└── output/submissions/
+    ├── INV-001-submission.json           # Structured data
+    ├── INV-001-submission.pptx           # PowerPoint presentation
+    └── diagrams/
+        ├── INV-001-diagram-1.png         # Rendered Mermaid diagrams
+        └── INV-001-diagram-2.png
 ```
 
 **If python-pptx unavailable:**

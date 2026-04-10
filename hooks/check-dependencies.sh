@@ -2,6 +2,11 @@
 # VS Patent Miner — Dependency Checker
 # Runs on SessionStart to verify required and recommended dependencies.
 # Prints warnings for missing dependencies.
+#
+# Environment variables provided by Claude Code:
+#   CLAUDE_PLUGIN_ROOT — Absolute path to the plugin installation directory
+#
+# This script is invoked via hooks/hooks.json on SessionStart.
 
 set -eo pipefail
 

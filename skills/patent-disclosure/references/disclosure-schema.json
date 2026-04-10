@@ -3,7 +3,7 @@
   "title": "Patent Disclosure",
   "description": "Structured format for patent disclosure documents",
   "type": "object",
-  "required": ["metadata", "problem_statement", "summary", "detailed_description", "claims", "prior_art"],
+  "required": ["metadata", "abstract", "problem_statement", "summary", "detailed_description", "claims", "drawings", "prior_art"],
   "properties": {
     "metadata": {
       "type": "object",
@@ -49,6 +49,23 @@
           "description": "Reference to innovation ID from scan"
         }
       }
+    },
+    "abstract": {
+      "type": "object",
+      "required": ["en", "zh_tw"],
+      "properties": {
+        "en": {
+          "type": "string",
+          "description": "English abstract — single paragraph, max 150 words. Must state: (1) what the invention is, (2) what problem it solves, (3) how it works at the highest level. Required by USPTO 37 CFR 1.72(b).",
+          "maxLength": 1500
+        },
+        "zh_tw": {
+          "type": "string",
+          "description": "Traditional Chinese (繁體中文) abstract for TIPO filing. Must use Taiwan terminology (演算法 not 算法, 軟體 not 软件). Max 300 characters.",
+          "maxLength": 900
+        }
+      },
+      "description": "Patent abstract in English and Traditional Chinese. Required by both USPTO and TIPO."
     },
     "problem_statement": {
       "type": "object",
@@ -226,10 +243,11 @@
     },
     "drawings": {
       "type": "array",
-      "description": "Optional - diagram descriptions for patent figures",
+      "minItems": 3,
+      "description": "REQUIRED — Patent figure diagrams with Mermaid code for rendering. Must include at least 3 figures: system architecture, process flowchart, and data flow.",
       "items": {
         "type": "object",
-        "required": ["figure_number", "title", "description"],
+        "required": ["figure_number", "title", "description", "mermaid_code"],
         "properties": {
           "figure_number": {
             "type": "integer"
@@ -239,7 +257,7 @@
           },
           "description": {
             "type": "string",
-            "description": "Description of what the drawing should show"
+            "description": "Description of what the drawing shows"
           },
           "type": {
             "type": "string",
@@ -247,7 +265,7 @@
           },
           "mermaid_code": {
             "type": "string",
-            "description": "Optional Mermaid.js diagram code"
+            "description": "REQUIRED — Valid Mermaid.js diagram code (graph TD, flowchart TD, or graph LR). This is rendered as a PNG image in the PDF."
           }
         }
       }
